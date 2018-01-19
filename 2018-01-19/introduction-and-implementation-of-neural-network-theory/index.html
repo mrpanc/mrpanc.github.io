@@ -1,0 +1,1259 @@
+<!doctype html>
+
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="V1vXnI0Nfa_btcFFdErMaQBeqJM4buKr3TaoijA2JuE" />
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="Ov4PizBELv" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="neural network,backward propagation," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta name="keywords" content="neural network,backward propagation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="神经网络理论介绍及实现">
+<meta property="og:url" content="http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/index.html">
+<meta property="og:site_name" content="Cheng&#39;s Blog">
+<meta property="og:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg">
+<meta property="og:updated_time" content="2018-01-19T15:31:30.855Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="神经网络理论介绍及实现">
+<meta name="twitter:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta name="twitter:image" content="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/"/>
+
+
+
+
+
+  <title> 神经网络理论介绍及实现 | Cheng's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <a href="https://github.com/mrpanc"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cheng's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Better me.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Panc">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cheng's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                神经网络理论介绍及实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-19T18:35:37+08:00">
+                2018-01-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/machine-learning/" itemprop="url" rel="index">
+                    <span itemprop="name">machine learning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018-01-19/introduction-and-implementation-of-neural-network-theory/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018-01-19/introduction-and-implementation-of-neural-network-theory/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018-01-19/introduction-and-implementation-of-neural-network-theory/" class="leancloud_visitors" data-flag-title="神经网络理论介绍及实现">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="神经网络架构"><a href="#神经网络架构" class="headerlink" title="神经网络架构"></a>神经网络架构</h2><p>假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是9，输出值小于$0.5$时，表明输入的图片不是9。</p>
+<div align="center"><img src="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg" width="60%" height="50%"></div>
+
+<a id="more"></a>
+<h2 id="反向传播算法"><a href="#反向传播算法" class="headerlink" title="反向传播算法"></a>反向传播算法</h2><p>与回归问题一样，我们也需要通过最小化代价函数来优化预测精度，但是由于神经网络包含了多个隐藏层，每个隐藏层都会输出预测，因此无法通过传统的梯度下降方法来最小化代价函数，而需要逐层考虑误差，并逐层优化。因此，在多层神经网络里面，我们需要通过反向传播算法优化预测精度。</p>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>在实际应用中，我们一般将反向传播算法与学习算法一起使用，例如<em>Stochatic Gradiant Decent</em>。结合之后的算法流程总结如下：</p>
+<ol>
+<li><strong>输入$n$个训练样本</strong></li>
+<li><strong>对于每一个训练样本</strong>$x_i, i \in {1,2,\cdots,n}$：设置输入层的对应激活值为$a_i^1$，然后执行以下步骤：<ul>
+<li><strong>前向传播</strong>： 对于$l \in {2, 3, \cdots, L}$，分别计算$z_i^l = w^la_i^{l-1}+b^l$，$a_i^l = \sigma(z_i^l)$。</li>
+<li><strong>输出层误差$\delta^L$</strong>：计算$\delta_i^L = \nabla_aC.*\sigma’(z_i^L)$</li>
+<li><strong>反向传播误差</strong>：对于$l \in {L-1, L-2, \cdots, 2}$，分别计算$\delta_i^l = ((w^{l+1})^T\delta_i^{l+1}).*\sigma’(z_i^l)$。</li>
+</ul>
+</li>
+<li><strong>梯度下降</strong>:对于$l \in {L, L-1, \cdots, 2}$，更新$w^l \rightarrow w^l-\frac{\alpha}{n}\sum_i\delta_i^l(a^{l-1}_i)^T$，$b^l \rightarrow b^l-\frac{\alpha}{n}\sum_i\delta_i^l$。</li>
+</ol>
+<h3 id="理论推导"><a href="#理论推导" class="headerlink" title="理论推导"></a>理论推导</h3><p>我们的最终目标是计算$\min_{w,b}C(w, b)$，即找到一组参数$(w,b)$使得代价函数$C$最小。因此我们需要计算$\frac{\partial C}{\partial w}$和$\frac{\partial C}{\partial b}$，从而结合梯度下降算法求得$C$的最小值。接下来将以计算$\frac{\partial C}{\partial w}$为例进行说明。</p>
+<ul>
+<li>计算输出层$L$的偏导$\frac{\partial C}{\partial w^L}$。根据链式法则，我们可以得到下式：<br>  $$<br>  \frac{\partial C}{\partial w^L} = \bbox[yellow,5px,border:2px solid red]{\frac{\partial C}{\partial a^L} \frac{\partial a^L}{\partial z^L}} \frac{\partial z^L}{\partial w^L} \tag{1}.<br>  $$</li>
+<li>计算隐藏层$L-1$的偏导$\frac{\partial C}{\partial w^{L-1}}$。根据链式法则，我们可以得到下式：<br>  $$<br>  \frac{\partial C}{\partial w^{L-1}} = \bbox[yellow,5px,border:2px solid red]<br>  {\frac{\partial C}{\partial a^L} \frac{\partial a^L}{\partial z^L}}<br>  \frac{\partial z^L}{\partial a^{L-1}}\frac{\partial a^{L-1}}{\partial z^{L-1}} \frac{\partial z^{L-1}}{\partial w^{L-1}} \tag{2}.<br>  $$</li>
+</ul>
+<p>观察公式$(1),(2)$，很明显用红框圈出来的是两个式子共有的一部分，通常我们称之为$\delta^{L}$，表达式如公式$(3)$所示。我们可以用$\delta^{L}$来计算输出层前一层的偏导。<br>$$<br>\delta^L = \frac{\partial C}{\partial a^L} \frac{\partial a^L}{\partial z^L} \tag{3}.<br>$$</p>
+<p>同理，隐藏层之间也有类似的共有部分，例如我们可以用$\delta^{L-1}$来计算隐藏层最后一层的前一层的偏导，表达式如公式$(4)$所示。<br>$$<br>\begin{align}<br>\delta^{L-1} &amp;= \frac{\partial C}{\partial a^L} \frac{\partial a^L}{\partial z^L} \frac{\partial z^L}{\partial a^{L-1}}\frac{\partial a^{L-1}}{\partial z^{L-1}} \\<br>&amp;= \delta^L \frac{\partial z^L}{\partial a^{L-1}} \frac{\partial a^{L-1}}{\partial z^{L-1}}.<br>\end{align} \tag{4}<br>$$</p>
+<p>通过公式$(3),(4)$，公式$(1),(2)$可以改写为以下形式：<br>$$<br>\begin{eqnarray}<br>\frac{\partial C}{\partial w^L} &amp;=&amp; \delta^L \frac{\partial z^L}{\partial w^L} \tag{5}, \\<br>\frac{\partial C}{\partial w^{L-1}} &amp;=&amp; \delta^{L-1} \frac{\partial z^{L-1}}{\partial w^{L-1}} \tag{6}.<br>\end{eqnarray}<br>$$</p>
+<p>假设激活函数为$\sigma(z)$，对公式$(3)\sim(6)$进行详细的计算。<br>$$<br>\begin{eqnarray}<br>\delta^L &amp;=&amp; \frac{\partial C}{\partial a^L} \frac{\partial a^L}{\partial z^L} \\<br>&amp;=&amp; \nabla_aC \cdot\sigma’(z^L) \tag{7}, \\<br>\\<br>\delta^{L-1} &amp;=&amp; \delta^L \frac{\partial z^L}{\partial a^{L-1}} \frac{\partial a^{L-1}}{\partial z^{L-1}} \\<br>&amp;=&amp; \delta^L  \frac{\partial (w^La^{L-1}+b^L)}{\partial a^{L-1}} \sigma’(z^{L-1}) \\<br>&amp;=&amp; \delta^Lw^L\sigma’(z^{L-1}) \tag{8}, \\<br>\\<br>\frac{\partial C}{\partial w^L} &amp;=&amp; \delta^L \frac{\partial z^L}{\partial w^L} \\<br>&amp;=&amp; \delta^L \frac{\partial (w^La^{L-1}+b^L)}{\partial w^L} \\<br>&amp;=&amp; \delta^La^{L-1} \tag{9}, \\<br>\\<br>\frac{\partial C}{\partial w^{L-1}} &amp;=&amp; \delta^{L-1} \frac{\partial z^{L-1}}{\partial w^{L-1}} \\<br>&amp;=&amp; \delta^{L-1} \frac{\partial (w^{L-1}a^{L-2}+b^{L-1})}{\partial w^{L-1}} \\<br>&amp;=&amp; \delta^{L-1}a^{L-2} \tag{10}.<br>\end{eqnarray}<br>$$</p>
+<p>按照相同的原理，我们可以推得：<br>$$<br>\begin{align}<br>\frac{\partial C}{\partial b^L} &amp;= \delta^L \frac{\partial z^L}{\partial b^L} \\<br>&amp;= \delta^L \frac{\partial (w^La^{L-1}+b^L)}{\partial b^L} \\<br>&amp;= \delta^L \tag{11}.<br>\end{align}<br>$$</p>
+<p>将公式$(9),(10)$合并，并用$l, l+1$分别替换$L-1, L$，则公式$(7)\sim(11)$可总结为以下三个式子：<br>$$<br>\begin{align}<br>\delta^l =  \begin{cases}<br>             \nabla_aC\cdot\sigma’(z^L), &amp; \qquad \text{if $l = L$}, \\<br>             \delta^{l+1}w^{l+1}\sigma’(z^{l}), &amp; \qquad \text{if $l\in{L-1, L-2, \cdots, 2}$},<br>            \end{cases} \tag{12} \\<br>\frac{\partial C}{\partial w^l} = \delta^la^{l-1}, \qquad l \in {L, L-1, \cdots, 2} \tag{13}, \\<br>\frac{\partial C}{\partial b^l} = \delta^l, \qquad l \in {L, L-1, \cdots, 2} \tag{14}.<br>\end{align}<br>$$</p>
+<p>观察公式$(12)\sim(14)$可以看出，当前层的代价函数偏导，需要依赖于后一层的计算结果。这也是为什么这个算法的名称叫做<em>反向传播算法</em>。</p>
+<h2 id="应用实践"><a href="#应用实践" class="headerlink" title="应用实践"></a>应用实践</h2><p>接下来我们将用反向传播算法对MNIST手写数字数据集进行识别。这个问题比较简单，数字共有10种可能，分别为${0, 1, \cdots, 9}$，因此是一个10分类问题。</p>
+<blockquote>
+<p>完整代码请参考GitHub: <a href="https://github.com/mrpanc/machine-learning-notes" target="_blank" rel="noopener">machine-learning-notes</a>(python3.6)</p>
+</blockquote>
+<h3 id="载入数据"><a href="#载入数据" class="headerlink" title="载入数据"></a>载入数据</h3><p>首先我们从<a href="http://yann.lecun.com/exdb/mnist/" target="_blank" rel="noopener">MNIST手写数字数据集官网</a>下载训练集和测试集，并解压到<code>data</code>文件夹中，<code>data</code>文件夹中应该包含<em>t10k-images.idx3-ubyte, t10k-labels.idx1-ubyte, train-images.idx3-ubyte, train-labels.idx1-ubyte</em>这四个文件。接下来通过<em>python-mnist</em>包对数据集进行导入。如果尚未安装该包，可通过以下命令进行安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install python-mnist</span><br></pre></td></tr></table></figure>
+<p>使用<em>python-mnist</em>包载入数据，代码如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> mnist <span class="keyword">import</span> MNIST</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">vectorized_result</span><span class="params">(j)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    将数字(0...9)变为one hot向量</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">        j: int，数字(0...9)</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">        e: np.ndarray, 10维的向量，其中第j位为1，其他位都为0。</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    e = np.zeros((<span class="number">10</span>, <span class="number">1</span>));</span><br><span class="line">    e[j] = <span class="number">1.0</span></span><br><span class="line">    <span class="keyword">return</span> e</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data_wrapper</span><span class="params">(dirpath)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    载入mnist数字识别数据集，并对其进行归一化处理</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">        dirpath: str, 数据所在文件夹路径</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">        training_data: list, 包含了60000个训练数据集，其中每一个数据由一个tuple '(x, y)'组成，</span></span><br><span class="line"><span class="string">                        x是训练的数字图像，类型是np.ndarray, 维度是(784,1)</span></span><br><span class="line"><span class="string">                        y表示训练的图像所属的标签，是一个10维的one hot向量</span></span><br><span class="line"><span class="string">        test_data: list, 包含了10000个测试数据集，其中每一个数据由一个tuple '(x, y)'组成，</span></span><br><span class="line"><span class="string">                        x是测试的数字图像，类型是np.ndarray, 维度是(784,1)</span></span><br><span class="line"><span class="string">                        y表示测试的图像所属标签，int类型，是一个(0...9)的数字</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    mndata = MNIST(dirpath)</span><br><span class="line">    tr_i, tr_o = mndata.load_training()</span><br><span class="line">    te_i, te_o = mndata.load_testing()</span><br><span class="line">    min_max_scaler = MinMaxScaler()</span><br><span class="line">    tr_i = min_max_scaler.fit_transform(tr_i)</span><br><span class="line">    te_i = min_max_scaler.transform(te_i)</span><br><span class="line">    training_inputs = [np.reshape(x, (<span class="number">784</span>, <span class="number">1</span>)) <span class="keyword">for</span> x <span class="keyword">in</span> tr_i]</span><br><span class="line">    training_outputs = [vectorized_result(y) <span class="keyword">for</span> y <span class="keyword">in</span> tr_o]</span><br><span class="line">    training_data = list(zip(training_inputs, training_outputs))</span><br><span class="line">    test_inputs = [np.reshape(x, (<span class="number">784</span>, <span class="number">1</span>)) <span class="keyword">for</span> x <span class="keyword">in</span> te_i]</span><br><span class="line">    test_data = list(zip(test_inputs, te_o))</span><br><span class="line">    <span class="keyword">return</span> training_data, test_data</span><br><span class="line"></span><br><span class="line">training_data, test_data = load_data_wrapper(<span class="string">"../data/"</span>)</span><br></pre></td></tr></table></figure>
+<p>执行时，你可能会遇到下面的错误：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FileNotFoundError: [Errno <span class="number">2</span>] No such file <span class="keyword">or</span> directory: <span class="string">'../data/t10k-images-idx3-ubyte'</span></span><br></pre></td></tr></table></figure>
+<p>这是因为<em>python-mnist</em>包中批量载入数据集时默认的文件名为<em>t10k-images-idx3-ubyte</em>，而从官网下载的数据集文件名为<em>t10k-images.idx3-ubyte</em>，因此只需要修改<code>data</code>文件夹中的文件名即可成功运行。</p>
+<h3 id="构建神经网络"><a href="#构建神经网络" class="headerlink" title="构建神经网络"></a>构建神经网络</h3><ol>
+<li><p>网络初始化<br> 搭建网络的基本框架，包括神经网络各个层的数目，以及初始化参数。</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Network</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sizes)</span>:</span></span><br><span class="line">        <span class="string">"""初始化神经网络</span></span><br><span class="line"><span class="string">        1. 根据输入，得到神经网络的结构</span></span><br><span class="line"><span class="string">        2. 根据神经网络的结构使用均值为0，方差为1的高斯分布初始化参数权值w和偏差b。</span></span><br><span class="line"><span class="string">        输入：</span></span><br><span class="line"><span class="string">        sizes: list, 表示神经网络各个layer的数目，例如[784, 30, 10]表示3层的神经网络。</span></span><br><span class="line"><span class="string">                    输入层784个神经元，隐藏层只有1层，有30个神经元，输出层有10个神经元。</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        self.num_layers = len(sizes)</span><br><span class="line">        self.sizes = sizes</span><br><span class="line">        self.biases = [np.random.randn(y, <span class="number">1</span>) <span class="keyword">for</span> y <span class="keyword">in</span> sizes[<span class="number">1</span>:]]</span><br><span class="line">        self.weights = [np.random.randn(y, x) <span class="keyword">for</span> x, y <span class="keyword">in</span> zip(sizes[:<span class="number">-1</span>], sizes[<span class="number">1</span>:])]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>随机梯度下降</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SGD</span><span class="params">(self, training_data, epochs, mini_batch_size, alpha, test_data=None)</span>:</span></span><br><span class="line">    <span class="string">"""随机梯度下降</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    training_data：是由tuples ``(x, y)``组成的list，x表示输入，y表示预计输出</span></span><br><span class="line"><span class="string">    epoches：int, 表示训练整个数据集的次数</span></span><br><span class="line"><span class="string">    mini_batch_size: int, 在SGD过程中每次迭代使用训练集的数目</span></span><br><span class="line"><span class="string">    alpha: float, 学习速率</span></span><br><span class="line"><span class="string">    test_data: 是由tuples ``(x, y)``组成的list，x表示输入，y表示预计输出。</span></span><br><span class="line"><span class="string">                如果提供了``test_data``，则每经过一次epoch，都计算并输出当前网络训练结果在测试集上的准确率。</span></span><br><span class="line"><span class="string">                虽然可以检测网络训练效果，但是会降低网络训练的速度。</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">if</span> test_data:</span><br><span class="line">        n_test = len(test_data)</span><br><span class="line">    m = len(training_data)</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(epochs):</span><br><span class="line">        np.random.shuffle(training_data)</span><br><span class="line">        mini_batches = [training_data[k:k+mini_batch_size]</span><br><span class="line">                    <span class="keyword">for</span> k <span class="keyword">in</span> range(<span class="number">0</span>, m, mini_batch_size)]</span><br><span class="line">        <span class="keyword">for</span> mini_batch <span class="keyword">in</span> mini_batches:</span><br><span class="line">            self.update_mini_batch(mini_batch, alpha)</span><br><span class="line">        <span class="keyword">if</span> test_data:</span><br><span class="line">            print(<span class="string">"Epoch &#123;0&#125;: &#123;1&#125; / &#123;2&#125;"</span>.format(j, self.evaluate(test_data), n_test))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">"Epoch &#123;0&#125; complete"</span>.format(j))</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>更新权值$w$和偏差$b$</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">update_mini_batch</span><span class="params">(self, mini_batch, alpha)</span>:</span></span><br><span class="line">    <span class="string">"""每迭代一次mini_batch，根据梯度下降方法，使用反向传播得到的结果更新权值``w``和偏差``b``</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    mini_batch: 由tuples ``(x, y)``组成的list</span></span><br><span class="line"><span class="string">    alpha: int，学习速率</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    nabla_b = [np.zeros(b.shape) <span class="keyword">for</span> b <span class="keyword">in</span> self.biases]</span><br><span class="line">    nabla_w = [np.zeros(w.shape) <span class="keyword">for</span> w <span class="keyword">in</span> self.weights]</span><br><span class="line">    <span class="keyword">for</span> x, y <span class="keyword">in</span> mini_batch:</span><br><span class="line">        delta_nabla_b, delta_nable_w = self.back_prop(x, y)</span><br><span class="line">        nabla_b = [nb+dnb <span class="keyword">for</span> nb, dnb <span class="keyword">in</span> zip(nabla_b, delta_nabla_b)]</span><br><span class="line">        nabla_w = [nw+dnw <span class="keyword">for</span> nw, dnw <span class="keyword">in</span> zip(nabla_w, delta_nable_w)]</span><br><span class="line">    self.weights = [w-(alpha/len(mini_batch))*nw</span><br><span class="line">                <span class="keyword">for</span> w, nw <span class="keyword">in</span> zip(self.weights, nabla_w)]</span><br><span class="line">    self.biases = [b-(alpha/len(mini_batch))*nb</span><br><span class="line">                <span class="keyword">for</span> b, nb <span class="keyword">in</span> zip(self.biases, nabla_b)]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>反向传播</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">back_prop</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    <span class="string">"""反向传播</span></span><br><span class="line"><span class="string">    1. 前向传播，获得每一层的激活值</span></span><br><span class="line"><span class="string">    2. 根据输出值计算得到输出层的误差``delta``</span></span><br><span class="line"><span class="string">    3. 根据``delta``计算输出层C_x对参数``w``, ``b``的偏导</span></span><br><span class="line"><span class="string">    4. 反向传播得到每一层的误差，并根据误差计算当前层C_x对参数``w``, ``b``的偏导</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    x: np.ndarray, 单个训练数据</span></span><br><span class="line"><span class="string">    y: np.ndarray, 训练数据对应的预计输出值</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">    nabla_b: list, C_x对``b``的偏导</span></span><br><span class="line"><span class="string">    nabla_w: list, C_x对``w``的偏导</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    nabla_b = [np.zeros(b.shape) <span class="keyword">for</span> b <span class="keyword">in</span> self.biases]</span><br><span class="line">    nabla_w = [np.zeros(w.shape) <span class="keyword">for</span> w <span class="keyword">in</span> self.weights]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># forward prop</span></span><br><span class="line">    activation = x</span><br><span class="line">    activations = [x]</span><br><span class="line">    zs = []</span><br><span class="line">    <span class="keyword">for</span> b, w <span class="keyword">in</span> zip(self.biases, self.weights):</span><br><span class="line">        z = np.dot(w, activation)+b</span><br><span class="line">        zs.append(z)</span><br><span class="line">        activation = sigmoid(z)</span><br><span class="line">        activations.append(activation)</span><br><span class="line">    <span class="comment"># backward prop</span></span><br><span class="line">    delta = self.cost_derivative(activations[<span class="number">-1</span>], y)*sigmoid_prime(zs[<span class="number">-1</span>])</span><br><span class="line">    nabla_b[<span class="number">-1</span>] = delta</span><br><span class="line">    nabla_w[<span class="number">-1</span>] = np.dot(delta, activations[<span class="number">-2</span>].transpose())</span><br><span class="line">    <span class="keyword">for</span> l <span class="keyword">in</span> range(<span class="number">2</span>, self.num_layers):</span><br><span class="line">        z = zs[-l];</span><br><span class="line">        sp = sigmoid_prime(z)</span><br><span class="line">        delta = np.dot(self.weights[-l+<span class="number">1</span>].transpose(), delta)*sp</span><br><span class="line">        nabla_b[-l] = delta</span><br><span class="line">        nabla_w[-l] = np.dot(delta, activations[-l<span class="number">-1</span>].transpose())</span><br><span class="line">    <span class="keyword">return</span> (nabla_b, nabla_w)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>$C_x$对$a^L$的偏导</p>
+  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost_derivative</span><span class="params">(self, output_activations, y)</span>:</span></span><br><span class="line">    <span class="string">"""代价函数对a的偏导</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    output_activations： np.ndarray, 输出层的激活值，即a^L</span></span><br><span class="line"><span class="string">    y: np.ndarray, 预计输出值</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">    output_activations-y: list, 偏导值</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">return</span> (output_activations-y)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>准确率计算</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate</span><span class="params">(self, test_data)</span>:</span></span><br><span class="line">    <span class="string">"""计算准确率，将测试集中的x带入训练后的网络计算得到输出值，</span></span><br><span class="line"><span class="string">        并得到最终的分类结果，与预期的结果进行比对，最终得到测试集中被正确分类的数目</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    test_data: 由tuples ``(x, y)``组成的list</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">    int, 测试集中正确分类的数据个数</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    test_results = [(np.argmax(self.feed_forward(x)), y) <span class="keyword">for</span> x, y <span class="keyword">in</span> test_data]</span><br><span class="line">    <span class="keyword">return</span> sum(int(x==y) <span class="keyword">for</span> (x, y) <span class="keyword">in</span> test_results)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>前馈<br>根据当前网络训练的结果，对数据$x$进行预测</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">feed_forward</span><span class="params">(self, a)</span>:</span></span><br><span class="line">    <span class="string">"""前馈</span></span><br><span class="line"><span class="string">    输入：</span></span><br><span class="line"><span class="string">    a：np.ndarray</span></span><br><span class="line"><span class="string">    输出：</span></span><br><span class="line"><span class="string">    a：np.ndarray，预测输出</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">for</span> b, w <span class="keyword">in</span> zip(self.biases, self.weights):</span><br><span class="line">        a = sigmoid(np.dot(w, a)+b)</span><br><span class="line">    <span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>激活函数及其导数</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="string">"""The sigmoid function"""</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span>/(<span class="number">1.0</span>+np.exp(-z))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid_prime</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="string">"""Derivative of the sigmoid function"""</span></span><br><span class="line">    <span class="keyword">return</span> sigmoid(z)*(<span class="number">1</span>-sigmoid(z))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>训练<br> 训练全部的数据需要一定的时间（在我实验室的老机器上用时3m32s，仅供参考），如果想要快速的查看训练结果，可以取部分训练集和测试集进行训练和测试。</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net = Network([<span class="number">784</span>, <span class="number">30</span>, <span class="number">10</span>])</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">3.0</span>, test_data=test_data)</span><br></pre></td></tr></table></figure>
+<pre><code>输出：
+Epoch 0: 9121 / 10000
+Epoch 1: 9271 / 10000
+Epoch 2: 9317 / 10000
+Epoch 3: 9371 / 10000
+Epoch 4: 9362 / 10000
+Epoch 5: 9395 / 10000
+Epoch 6: 9393 / 10000
+Epoch 7: 9475 / 10000
+Epoch 8: 9473 / 10000
+Epoch 9: 9473 / 10000
+Epoch 10: 9450 / 10000
+Epoch 11: 9466 / 10000
+Epoch 12: 9477 / 10000
+Epoch 13: 9497 / 10000
+Epoch 14: 9475 / 10000
+Epoch 15: 9477 / 10000
+Epoch 16: 9481 / 10000
+Epoch 17: 9483 / 10000
+Epoch 18: 9498 / 10000
+Epoch 19: 9471 / 10000
+Epoch 20: 9488 / 10000
+Epoch 21: 9486 / 10000
+Epoch 22: 9465 / 10000
+Epoch 23: 9461 / 10000
+Epoch 24: 9499 / 10000
+Epoch 25: 9496 / 10000
+Epoch 26: 9501 / 10000
+Epoch 27: 9498 / 10000
+Epoch 28: 9499 / 10000
+Epoch 29: 9506 / 10000
+</code></pre><p> 可以看到经过30轮的训练，准确率已经达到了95.06%（epoch 29）。作为第一次尝试，这个准确率已经非常令人满意了。<br> 接下来我们增大隐藏层的层数，例如50，来重新训练，看看效果如何。隐藏层增加后，训练速度会变得更加缓慢（用时4m46s），在等待训练完成的过程中，可以去倒杯茶，放松一下身体。</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net = Network([<span class="number">784</span>, <span class="number">50</span>, <span class="number">10</span>])</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">3.0</span>, test_data=test_data)</span><br></pre></td></tr></table></figure>
+<pre><code>输出：
+Epoch 0: 9176 / 10000
+Epoch 1: 9307 / 10000
+Epoch 2: 9406 / 10000
+Epoch 3: 9433 / 10000
+Epoch 4: 9476 / 10000
+Epoch 5: 9508 / 10000
+Epoch 6: 9499 / 10000
+Epoch 7: 9502 / 10000
+Epoch 8: 9528 / 10000
+Epoch 9: 9533 / 10000
+Epoch 10: 9569 / 10000
+Epoch 11: 9573 / 10000
+Epoch 12: 9559 / 10000
+Epoch 13: 9592 / 10000
+Epoch 14: 9566 / 10000
+Epoch 15: 9588 / 10000
+Epoch 16: 9575 / 10000
+Epoch 17: 9588 / 10000
+Epoch 18: 9584 / 10000
+Epoch 19: 9587 / 10000
+Epoch 20: 9583 / 10000
+Epoch 21: 9607 / 10000
+Epoch 22: 9589 / 10000
+Epoch 23: 9595 / 10000
+Epoch 24: 9605 / 10000
+Epoch 25: 9600 / 10000
+Epoch 26: 9600 / 10000
+Epoch 27: 9595 / 10000
+Epoch 28: 9592 / 10000
+Epoch 29: 9599 / 10000
+</code></pre><p> 观察结果可以发现准确率上升到了96.07%（epoch 21）。在这个实例下，增加隐藏层提高了训练的准确率。但是并非一直如此，在后续的文章中，我将继续介绍如何提高网络的训练速度和训练效果。</p>
+</li>
+</ol>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p><a href="http://neuralnetworksanddeeplearning.com" target="_blank" rel="noopener">Michael A. Nielsen, “Neural network and deep learning”, Determination Press, 2015</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/wechatpay.png" alt="Mr Panc WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.png" alt="Mr Panc Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      Mr Panc
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/" title="神经网络理论介绍及实现">http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/neural-network/" rel="tag"># neural network</a>
+          
+            <a href="/tags/backward-propagation/" rel="tag"># backward propagation</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017-05-17/继承与组合/" rel="next" title="继承与组合">
+                <i class="fa fa-chevron-left"></i> 继承与组合
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="Mr Panc" />
+          <p class="site-author-name" itemprop="name">Mr Panc</p>
+           
+              <p class="site-description motion-element" itemprop="description">A blog mainly about machine learning, deep learning and some other resources.</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mrpanc" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络架构"><span class="nav-number">1.</span> <span class="nav-text">神经网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播算法"><span class="nav-number">2.</span> <span class="nav-text">反向传播算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">2.1.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理论推导"><span class="nav-number">2.2.</span> <span class="nav-text">理论推导</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用实践"><span class="nav-number">3.</span> <span class="nav-text">应用实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#载入数据"><span class="nav-number">3.1.</span> <span class="nav-text">载入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建神经网络"><span class="nav-number">3.2.</span> <span class="nav-text">构建神经网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Panc</span>
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></span>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">本站访客数<span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv">本站总访问量<span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+      
+    </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'mrpanc';
+      var disqus_identifier = '2018-01-19/introduction-and-implementation-of-neural-network-theory/';
+
+      var disqus_title = "神经网络理论介绍及实现";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("EnIWcmxAoAWKQKGm30FWAbx1-gzGzoHsz", "bSCT7Rz7X8XzTMGkMtcmNqCF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>
