@@ -1,3 +1,3 @@
-http://www.mrpanc.com/2018-01-19/introduction-and-implementation-of-neural-network-theory/
-http://www.mrpanc.com/2017-05-17/继承与组合/
-http://www.mrpanc.com/2017-05-07/覆盖equals和hashcode方法/
+http://www.mrpanc.com/p/3045050681/
+http://www.mrpanc.com/p/undefined/
+http://www.mrpanc.com/p/undefined/
