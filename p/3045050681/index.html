@@ -99,12 +99,12 @@
 <meta property="og:site_name" content="AI小屋">
 <meta property="og:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg">
 <meta property="og:updated_time" content="2018-01-22T02:16:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络理论介绍及实现">
 <meta name="twitter:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
-<meta name="twitter:image" content="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg">
+<meta name="twitter:image" content="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg">
 
 
 
@@ -470,7 +470,7 @@
       
         <h2 id="神经网络架构"><a href="#神经网络架构" class="headerlink" title="神经网络架构"></a>神经网络架构</h2><p>假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是9，输出值小于$0.5$时，表明输入的图片不是9。</p>
 <a id="more"></a>
-<div align="center"><img src="https://github.com/mrpanc/machine-learning-notes/raw/master/image/nn_structure.jpg" width="60%" height="50%"></div>
+<div align="center"><img src="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg" width="60%" height="50%"></div>
 
 <h2 id="反向传播算法"><a href="#反向传播算法" class="headerlink" title="反向传播算法"></a>反向传播算法</h2><p>与回归问题一样，我们也需要通过最小化代价函数来优化预测精度，但是由于神经网络包含了多个隐藏层，每个隐藏层都会输出预测，因此无法通过传统的梯度下降方法来最小化代价函数，而需要逐层考虑误差，并逐层优化。因此，在多层神经网络里面，我们需要通过反向传播算法优化预测精度。</p>
 <h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>在实际应用中，我们一般将反向传播算法与学习算法一起使用，例如<em>Stochatic Gradiant Decent</em>。结合之后的算法流程总结如下：</p>
