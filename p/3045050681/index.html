@@ -568,8 +568,8 @@ Epoch 26: 9602 / 10000
 Epoch 27: 9581 / 10000
 Epoch 28: 9582 / 10000
 Epoch 29: 9599 / 10000
-</code></pre><p> 观察结果可以发现准确率上升到了$96.02\%$（epoch 26）。增加隐藏层的确提高了训练的准确率。但是并非一直如此。接下来我们继续增加隐藏层数目，将其设置为100，并设置<code>epoches=100</code>，发现准确率变为了$87.84\%$，较之前反而下降了，并且训练的时间也延长到了$27min 15s$。因此在设置隐藏层数目时，不能盲目的增加隐藏层数目，否则只会费力不讨好，既降低了准确率，又增加了训练所需时间。比较好的办法是先根据经验设置一个初始值，然后在初始值的基础上慢慢增加，从而得到一个合理的数字。</p>
- <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net = Network([<span class="number">784</span>, <span class="number">50</span>, <span class="number">10</span>])</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">3</span>, test_data=test_data)</span><br></pre></td></tr></table></figure>
+</code></pre><p> 观察结果可以发现准确率上升到了$96.02\%$（epoch 26）。增加隐藏层的确提高了训练的准确率。但是并非一直如此。接下来我们继续增加隐藏层数目，将其设置为100，并设置<code>epoches=60</code>，发现准确率变为了$87.84\%$，较之前反而下降了，并且训练的时间也延长到了$27min 15s$。因此在设置隐藏层数目时，不能盲目的增加隐藏层数目，否则只会费力不讨好，既降低了准确率，又增加了训练所需时间。比较好的办法是先根据经验设置一个初始值，然后在初始值的基础上慢慢增加，从而得到一个合理的数字。</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net = Network([<span class="number">784</span>, <span class="number">100</span>, <span class="number">10</span>])</span><br><span class="line">net.SGD(training_data, <span class="number">60</span>, <span class="number">10</span>, <span class="number">3</span>, test_data=test_data)</span><br></pre></td></tr></table></figure>
 <pre><code>输出：
 Epoch 0: 7308 / 10000
 Epoch 1: 7572 / 10000
