@@ -92,19 +92,19 @@
 
 
 
-<meta name="description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta name="description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3045050681/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;神经网络理论介绍及实">
 <meta name="keywords" content="神经网络,MNIST,反向传播">
 <meta property="og:type" content="article">
 <meta property="og:title" content="神经网络理论介绍及实现">
 <meta property="og:url" content="http://www.mrpanc.com/p/3045050681/index.html">
 <meta property="og:site_name" content="AI小屋">
-<meta property="og:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta property="og:description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3045050681/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;神经网络理论介绍及实">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg">
-<meta property="og:updated_time" content="2018-01-22T02:16:00.000Z">
+<meta property="og:updated_time" content="2018-01-23T14:01:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="神经网络理论介绍及实现">
-<meta name="twitter:description" content="神经网络架构假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是">
+<meta name="twitter:description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3045050681/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;神经网络理论介绍及实">
 <meta name="twitter:image" content="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg">
 
 
@@ -364,8 +364,8 @@
               
                 <span class="post-meta-item-text">更新于</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-01-22T10:16:00+08:00">
-                2018-01-22
+              <time title="更新于" itemprop="dateModified" datetime="2018-01-23T22:01:00+08:00">
+                2018-01-23
               </time>
             
           </span>
@@ -469,7 +469,19 @@
       
 
       
-        <h2 id="神经网络架构"><a href="#神经网络架构" class="headerlink" title="神经网络架构"></a>神经网络架构</h2><p>假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是9，输出值小于$0.5$时，表明输入的图片不是9。</p>
+        <p><link rel="canonical" href="http://www.mrpanc.com/p/3045050681"></p>
+<script type="application/ld+json">
+    {
+        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+        "@id": "http://www.mrpanc.com/p/3045050681/",
+        "appid": "1590300728750598",
+        "title": "神经网络理论介绍及实现",
+        "pubDate": "2018-01-19T18:35:37",
+        "upDate": "2018-01-23T22:01:00"
+    }
+</script>
+
+<h2 id="神经网络架构"><a href="#神经网络架构" class="headerlink" title="神经网络架构"></a>神经网络架构</h2><p>假设我们的神经网络结构如下图所示，每一个圆都代表一个神经元，第一层被称为输入层，最后一层被称为输出层，位于中间的被称为隐藏层。输入层和输出层的设计往往是非常直接的。以我们需要学习的MNIST数据集为例，想要验证一张手写的数字图片是否为9，假设图片大小为$64\times64$，那么就有$64\times64$个输入神经元，输出层则只有一个神经元，当输出值大于$0.5$时表明输入的图片是9，输出值小于$0.5$时，表明输入的图片不是9。</p>
 <a id="more"></a>
 <div align="center"><img src="http://opqcor65w.bkt.clouddn.com/20180122112828_cd1Ocx_nn_structure.jpeg" width="60%" height="50%"></div>
 

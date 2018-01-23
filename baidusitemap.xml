@@ -4,8 +4,28 @@
 
     
   <url>
+    <loc>http://www.mrpanc.com/p/1563918912/</loc>
+    <lastmod>2018-01-23T14:02:46.000Z</lastmod>
+    <data>
+        <display>
+        <title>覆盖equals和hashcode方法</title>
+        <pubTime>2017-05-07T12:26:00.000Z</pubTime>
+        
+        <tag>java</tag>
+         
+         
+           
+             
+              <breadCrumb title="读书笔记" url="http://www.mrpanc.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://www.mrpanc.com/p/351146056/</loc>
-    <lastmod>2018-01-23T13:11:26.000Z</lastmod>
+    <lastmod>2018-01-23T14:01:00.000Z</lastmod>
     <data>
         <display>
         <title>继承与组合</title>
@@ -25,7 +45,7 @@
     
   <url>
     <loc>http://www.mrpanc.com/p/3045050681/</loc>
-    <lastmod>2018-01-22T02:16:00.000Z</lastmod>
+    <lastmod>2018-01-23T14:01:00.000Z</lastmod>
     <data>
         <display>
         <title>神经网络理论介绍及实现</title>
@@ -39,26 +59,6 @@
            
              
               <breadCrumb title="machine learning" url="http://www.mrpanc.com/categories/machine-learning/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://www.mrpanc.com/p/1563918912/</loc>
-    <lastmod>2018-01-20T16:02:10.809Z</lastmod>
-    <data>
-        <display>
-        <title>覆盖equals和hashcode方法</title>
-        <pubTime>2017-05-07T12:26:00.000Z</pubTime>
-        
-        <tag>java</tag>
-         
-         
-           
-             
-              <breadCrumb title="读书笔记" url="http://www.mrpanc.com/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
           
         </display>
     </data>
