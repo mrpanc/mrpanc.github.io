@@ -467,7 +467,7 @@
       
 
       
-        <p><link rel="canonical" href="http://www.mrpanc.com/p/1563918912"></p>
+        <link rel="canonical" href="http://www.mrpanc.com/p/1563918912">
 <script type="application/ld+json">
     {
         "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
@@ -478,9 +478,10 @@
         "upDate": "2018-01-23T22:01:00"
     }
 </script>
-
-<h2 id="覆盖条件"><a href="#覆盖条件" class="headerlink" title="覆盖条件"></a>覆盖条件</h2><p>当类具有自己特有的“逻辑相等”概念时（与对象等同的概念不相同），这时就需要覆盖<code>equals</code>方法。</p>
-<h2 id="通用约定"><a href="#通用约定" class="headerlink" title="通用约定"></a>通用约定</h2><p>查看<code>Object</code>类源码的<code>equals</code>方法，注释上明确的写明了需要遵守的约定如下：</p>
+<h2 id="覆盖条件">覆盖条件</h2>
+<p>当类具有自己特有的“逻辑相等”概念时（与对象等同的概念不相同），这时就需要覆盖<code>equals</code>方法。</p>
+<h2 id="通用约定">通用约定</h2>
+<p>查看<code>Object</code>类源码的<code>equals</code>方法，注释上明确的写明了需要遵守的约定如下：</p>
 <ul>
 <li>自反性：对于任何非null的引用值<code>x</code>， <code>x.equals(x)</code>将会返回<code>true</code>。</li>
 <li>对称性：对于任何非null的引用值<code>x</code>和<code>y</code>，当且仅当<code>y.equals(x)</code>返回<code>true</code>时，<code>x.equals(y)</code>也必须返回<code>true</code>。</li>
@@ -491,54 +492,73 @@
 <p>原注释如下：</p>
 <blockquote>
 <ul>
-<li><p>It is reflexive: for any non-null reference value <code>x.equals(x)</code> should return <code>true</code>.</p>
-</li>
-<li><p>It is symmetric: for any non-null reference values <code>x</code>and <code>y</code>, <code>x.equals(y)</code> should return <code>true</code> if and only if <code>y.equals(x)</code>returns <code>true</code>.</p>
-</li>
-<li><p>It is transitive: for any non-null reference values <code>x</code>, <code>y</code>, and <code>z</code>, if<code>x.equals(y)</code>returns <code>true</code>and <code>y.equals(z)</code>returns <code>true</code>, then <code>x.equals(z)</code>should return <code>true</code>.</p>
-</li>
-<li><p>It is consistent: for any non-null reference values <code>x</code>and <code>y</code>, multiple invocations of <code>x.equals(y)</code>consistently return <code>true</code> or consistently return <code>false</code>, provided no information used in <code>equals</code>comparisons on the objects is modified.</p>
-</li>
-<li><p>For any non-null reference value <code>x</code>, <code>x.equals(null)</code>should return <code>false</code>.</p>
-</li>
+<li>It is reflexive: for any non-null reference value <code>x.equals(x)</code> should return <code>true</code>.</li>
 </ul>
 </blockquote>
-<h2 id="覆盖方法"><a href="#覆盖方法" class="headerlink" title="覆盖方法"></a>覆盖方法</h2><p>例如创建一个<code>Employee</code>对象如下：</p>
+<blockquote>
+<ul>
+<li>It is symmetric: for any non-null reference values <code>x</code>and <code>y</code>, <code>x.equals(y)</code> should return <code>true</code> if and only if <code>y.equals(x)</code>returns <code>true</code>.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>It is transitive: for any non-null reference values <code>x</code>, <code>y</code>, and <code>z</code>, if<code>x.equals(y)</code>returns <code>true</code>and <code>y.equals(z)</code>returns <code>true</code>, then <code>x.equals(z)</code>should return <code>true</code>.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>It is consistent: for any non-null reference values <code>x</code>and <code>y</code>, multiple invocations of <code>x.equals(y)</code>consistently return <code>true</code> or consistently return <code>false</code>, provided no information used in <code>equals</code>comparisons on the objects is modified.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>For any non-null reference value <code>x</code>, <code>x.equals(null)</code>should return <code>false</code>.</li>
+</ul>
+</blockquote>
+<h2 id="覆盖方法">覆盖方法</h2>
+<p>例如创建一个<code>Employee</code>对象如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> id;</span><br><span class="line">    <span class="keyword">private</span> String firstName;</span><br><span class="line">    <span class="keyword">private</span> String lastName;</span><br><span class="line"></span><br><span class="line">    ... <span class="comment">// setter and getter method</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>假如需要比较两个<code>employee</code>，如果使用默认的<code>equals</code>方法如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Employee e1 = <span class="keyword">new</span> Employee();</span><br><span class="line">        Employee e2 = <span class="keyword">new</span> Employee();</span><br><span class="line">        e1.setId(<span class="number">1000</span>);</span><br><span class="line">        e2.setId(<span class="number">1000</span>);</span><br><span class="line">        System.out.print(e1.equals(e2));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>显然输出结果为<code>false</code>。这时候就满足了我们之前提到的覆盖条件：Employee类需要根据自身属性来判断两个类是否相同。因此可以覆盖<code>equals</code>方法如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">if</span> (!(o <span class="keyword">instanceof</span> Employee)) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    Employee employee = (Employee) o;</span><br><span class="line">    <span class="keyword">return</span> id == employee.id &amp;&amp; (getFirstName() != <span class="keyword">null</span> </span><br><span class="line">            ? getFirstName().equals(employee.getFirstName())</span><br><span class="line">            : employee.getFirstName() == <span class="keyword">null</span> &amp;&amp; (getLastName() != <span class="keyword">null</span></span><br><span class="line">            ? getLastName().equals(employee.getLastName()) : employee.getLastName() == <span class="keyword">null</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>现在再进行测试，即可得到结果为<code>true</code>。</p>
-<h1 id="覆盖hashcode方法"><a href="#覆盖hashcode方法" class="headerlink" title="覆盖hashcode方法"></a>覆盖hashcode方法</h1><h2 id="覆盖条件-1"><a href="#覆盖条件-1" class="headerlink" title="覆盖条件"></a>覆盖条件</h2><p>当覆盖了equals方法后，也必须覆盖hashcode方法。如果不覆盖hashcode方法，就会违反Object.hashcode的通用约定，就会导致该类无法结合所有基于散列的集合一起运作，例如Hashmap，Hashset，Hashtable等。</p>
-<h2 id="通用约定-1"><a href="#通用约定-1" class="headerlink" title="通用约定"></a>通用约定</h2><p>在Object类的源码中，对hashcode做了如下约定：</p>
+<h1 id="覆盖hashcode方法">覆盖hashcode方法</h1>
+<h2 id="覆盖条件-1">覆盖条件</h2>
+<p>当覆盖了equals方法后，也必须覆盖hashcode方法。如果不覆盖hashcode方法，就会违反Object.hashcode的通用约定，就会导致该类无法结合所有基于散列的集合一起运作，例如Hashmap，Hashset，Hashtable等。</p>
+<h2 id="通用约定-1">通用约定</h2>
+<p>在Object类的源码中，对hashcode做了如下约定：</p>
 <ul>
-<li><p>在Java应用程序执行的过程中，无论对同一个对象调用多少次，只要对象的equals方法的比较操作所用到的信息没有被修改，那么该对象的<code>hashcode</code>方法都必须始终返回同一个整数。在同一个应用程序的多次执行过程中，每次执行所返回的整数可以不一致。</p>
-</li>
-<li><p>如果两个对象通过equals方法比较是相等的，那么分别调用这两个对象的<code>hashcode</code>方法返回的整数必须是相等的。</p>
-</li>
-<li><p>如果两个对象通过equals方法比较是不等的。分别调用这两个对象的<code>hashcode</code>方法返回的整数不一定要相等。但是程序员应该要意识到给每个不相等的对象产生不同的整数结果可能提高散列表（hash table）的性能。</p>
-</li>
+<li><p>在Java应用程序执行的过程中，无论对同一个对象调用多少次，只要对象的equals方法的比较操作所用到的信息没有被修改，那么该对象的<code>hashcode</code>方法都必须始终返回同一个整数。在同一个应用程序的多次执行过程中，每次执行所返回的整数可以不一致。</p></li>
+<li><p>如果两个对象通过equals方法比较是相等的，那么分别调用这两个对象的<code>hashcode</code>方法返回的整数必须是相等的。</p></li>
+<li><p>如果两个对象通过equals方法比较是不等的。分别调用这两个对象的<code>hashcode</code>方法返回的整数不一定要相等。但是程序员应该要意识到给每个不相等的对象产生不同的整数结果可能提高散列表（hash table）的性能。</p></li>
 </ul>
 <p>原文如下：</p>
 <blockquote>
 <ul>
-<li><p>Whenever it is invoked on the same object more than once during an execution of a Java application, the <code>hashCode</code> method must consistently return the same integer, provided no information used in <code>equals</code> comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.</p>
-</li>
-<li><p>If two objects are equal according to the <code>equals(Object)</code> method, then calling the <code>hashCode</code> method on each of the two objects must produce the same integer result.</p>
-</li>
-<li><p>It is not required that if two objects are unequal according to the <code>java.lang.Object#equals(java.lang.Object)</code> method, then calling the <code>hashCode</code> method on each of the two objects must produce distinct integer results.  However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hash tables.</p>
-</li>
+<li>Whenever it is invoked on the same object more than once during an execution of a Java application, the <code>hashCode</code> method must consistently return the same integer, provided no information used in <code>equals</code> comparisons on the object is modified. This integer need not remain consistent from one execution of an application to another execution of the same application.</li>
 </ul>
 </blockquote>
-<h2 id="覆盖方法-1"><a href="#覆盖方法-1" class="headerlink" title="覆盖方法"></a>覆盖方法</h2><p>同样使用<code>Employee</code>类来举例，考虑以下代码：</p>
+<blockquote>
+<ul>
+<li>If two objects are equal according to the <code>equals(Object)</code> method, then calling the <code>hashCode</code> method on each of the two objects must produce the same integer result.</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>It is not required that if two objects are unequal according to the <code>java.lang.Object#equals(java.lang.Object)</code> method, then calling the <code>hashCode</code> method on each of the two objects must produce distinct integer results. However, the programmer should be aware that producing distinct integer results for unequal objects may improve the performance of hash tables.</li>
+</ul>
+</blockquote>
+<h2 id="覆盖方法-1">覆盖方法</h2>
+<p>同样使用<code>Employee</code>类来举例，考虑以下代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Employee e1 = <span class="keyword">new</span> Employee();</span><br><span class="line">        Employee e2 = <span class="keyword">new</span> Employee();</span><br><span class="line">        e1.setId(<span class="number">100</span>);</span><br><span class="line">        e2.setId(<span class="number">100</span>);</span><br><span class="line">        <span class="comment">// print true</span></span><br><span class="line">        System.out.println(e1.equals(e2));</span><br><span class="line">        Map&lt;Employee, String&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        map.put(e1, <span class="string">"Jenny"</span>);</span><br><span class="line">        <span class="comment">// print null</span></span><br><span class="line">        System.out.println(map.get(e2));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如何两个对象通过equals返回true，那么打印的值应该为Jenny才对。问题就出现在没有重写hashcode方法上。这就是覆盖条件中提到的覆盖了equals方法而没有覆盖hashcode导致的。那么如何覆盖hashcode呢？可简单的通过以下步骤实现：</p>
-<ol>
+<ol style="list-style-type: decimal">
 <li>把某个非零的常数值，比如17保存在一个名为result的int类型的变量中。</li>
-<li><p>对对象中每个关键域（指equals方法中涉及的每个域），完成以下步骤：</p>
-<ol>
-<li>为该域计算int类型的散列码c:<ol>
+<li>对对象中每个关键域（指equals方法中涉及的每个域），完成以下步骤：
+<ol style="list-style-type: decimal">
+<li>为该域计算int类型的散列码c:
+<ol style="list-style-type: decimal">
 <li>若该域是<code>boolean</code>类型，则计算<code>(f?1:0)</code>。</li>
 <li>若该域是<code>byte</code>、<code>char</code>、<code>short</code>或<code>int</code>类型，则计算<code>(int) f</code>。</li>
 <li>若该域是<code>long</code>类型，则计算<code>(int) (f ^ (f &gt;&gt;&gt; 32))</code>。</li>
@@ -546,15 +566,11 @@
 <li>若该域是<code>double</code>类型，则计算<code>Double.doubleToLongBits(f)</code>，然后按照步骤2.1.3，为得到的long类型值计算散列值。</li>
 <li>若该域是一个对象引用，并且该类的<code>equals</code>方法通过递归的调用<code>equals</code>的方式来比较这个域，则同样为这个域递归的调用<code>hashcode</code>。如果需要更复杂的比较，则为这个域计算一个“范式”，然后针对这个范式调用<code>hashcode</code>。如果这个域的值为<code>null</code>，则返回<code>0</code>（或某个其他常数，通常为0）。</li>
 <li>若该域是一个数组，则要把每个元素当做单独的域来处理。也就是说，递归地应用上述规则，对每个重要的元素计算一个散列码，然后根据步骤2.2中的做法把这些散列值组合起来。如果数组域中的每个元素都很重要。可以利用发行版本1.5中增加的其中一个<code>Arrays.hashcode</code>方法。</li>
-</ol>
-</li>
+</ol></li>
 <li><p>按照下面的公式，把步骤2.1中计算得到的散列码c合并到result中：</p>
- <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="number">31</span> * result + c;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-<li><p>返回result。</p>
-</li>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = <span class="number">31</span> * result + c;</span><br></pre></td></tr></table></figure></li>
+</ol></li>
+<li>返回result。</li>
 <li>写完了hashcode方法后，问问自己“相等的实例是否都具有相等的散列码”。要编写单元测试来验证。若相等的实例有着不相等的散列码，则找出原因并修正。</li>
 </ol>
 <p>根据上述解决方案可以得到覆盖<code>hashcode</code>如下：</p>
