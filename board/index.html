@@ -92,17 +92,17 @@
 
 
 
-<meta name="description" content="期待你的留言~~">
+<meta name="description" content="期待你的留言~">
 <meta property="og:type" content="website">
 <meta property="og:title" content="留言板">
 <meta property="og:url" content="http://www.mrpanc.com/board/index.html">
 <meta property="og:site_name" content="AI小屋">
-<meta property="og:description" content="期待你的留言~~">
+<meta property="og:description" content="期待你的留言~">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-26T12:10:49.000Z">
+<meta property="og:updated_time" content="2018-01-27T02:21:43.793Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="留言板">
-<meta name="twitter:description" content="期待你的留言~~">
+<meta name="twitter:description" content="期待你的留言~">
 
 
 
@@ -326,7 +326,7 @@
 
     
     
-      <p>期待你的留言~~</p>
+      <p>期待你的留言~</p>
 
     
   </div>
@@ -337,7 +337,7 @@
 
 
           
-  <div class="comments" id="comments">
+  <div class="comment" id="comment">
     
       <div id="disqus_thread">
         <noscript>
@@ -583,45 +583,94 @@
 
 
 
+	
+
+
+
+
+
   
 
-    <script type="text/javascript">
-      var disqus_shortname = 'mrpanc';
-      var disqus_identifier = 'board/index.html';
-
-      var disqus_title = "留言板";
 
 
-      function run_disqus_script(disqus_script) {
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-      }
 
-      run_disqus_script('count.js');
 
-      
-        var disqus_config = function () {
-            this.page.url = disqus_url;
-            this.page.identifier = disqus_identifier;
-            this.page.title = disqus_title;
-        };
-        run_disqus_script('embed.js');
-      
+  
 
+
+
+
+
+  
+
+
+
+
+    <link rel="stylesheet" href="http://98.142.139.222/disqus/dist/iDisqus.min.css" />
+    <script src="http://98.142.139.222/disqus/dist/iDisqus.min.js"></script>
+    <script>
+        var emojiList = [{
+            code:'smile',
+            title:'笑脸',
+            unicode:'1f604'
+        },{
+            code:'mask',
+            title:'生病',
+            unicode:'1f637'
+        },{
+            code:'joy',
+            title:'破涕为笑',
+            unicode:'1f602'
+        },{
+            code:'stuck_out_tongue_closed_eyes',
+            title:'吐舌',
+            unicode:'1f61d'
+        },{
+            code:'flushed',
+            title:'脸红',
+            unicode:'1f633'
+        },{
+            code:'scream',
+            title:'恐惧',
+            unicode:'1f631'
+        },{
+            code:'pensive',
+            title:'失望',
+            unicode:'1f614'
+        },{
+            code:'unamused',
+            title:'无语',
+            unicode:'1f612'
+        },{
+            code:'grin',
+            title:'露齿笑',
+            unicode:'1f601'
+        },{
+            code:'heart_eyes',
+            title:'色',
+            unicode:'1f60d'
+        },{
+            code:'sweat',
+            title:'汗',
+            unicode:'1f613'
+        },{
+            code:'smirk',
+            title:'得意',
+            unicode:'1f60f'
+        }];
+
+        var disq = new iDisqus('comment', {
+            forum: 'mrpanc',
+            site: 'http://mrpanc.com',
+            api: 'http://98.142.139.222/disqus/api',
+            mode: 2,
+            badge: '博主',
+            timeout: 3000,
+            init: true,
+            emoji_list: emojiList
+        });
+        disq.count();
     </script>
-  
-
-
-
-
-
-
-
-
-
 
   
   
