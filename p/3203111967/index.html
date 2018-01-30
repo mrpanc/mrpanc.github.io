@@ -1,0 +1,1556 @@
+<!doctype html>
+
+
+
+
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <script src="//msite.baidu.com/sdk/c.js?appid=1590300728750598"></script>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="V1vXnI0Nfa_btcFFdErMaQBeqJM4buKr3TaoijA2JuE" />
+
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="Ov4PizBELv" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习率下降,Cross-Entropy,交叉熵代价函数,二次代价函数,softmax" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3203111967/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;探索神经网络学习率下">
+<meta name="keywords" content="学习率下降,Cross-Entropy,交叉熵代价函数,二次代价函数,softmax">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索神经网络学习率下降问题">
+<meta property="og:url" content="http://www.mrpanc.com/p/3203111967/index.html">
+<meta property="og:site_name" content="AI小屋">
+<meta property="og:description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3203111967/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;探索神经网络学习率下">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180122235411_OaRamK_single_neural_network.jpeg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180123105949_h1d1JL_slowdown1.jpeg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180123105949_0VT8W3_slowdown2.jpeg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180123113035_oahPCq_sigmoid.jpeg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180124102118_8lpW57_slowdown4.jpeg">
+<meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180124102118_co9UYZ_slowdown3.jpeg">
+<meta property="og:updated_time" content="2018-01-30T11:57:03.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索神经网络学习率下降问题">
+<meta name="twitter:description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://www.mrpanc.com/p/3203111967/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;探索神经网络学习率下">
+<meta name="twitter:image" content="http://opqcor65w.bkt.clouddn.com/20180122235411_OaRamK_single_neural_network.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":true,"scrollpercent":true},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://www.mrpanc.com/p/3203111967/"/>
+
+
+
+
+
+  <title> 探索神经网络学习率下降问题 | AI小屋 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+    <a href="https://github.com/mrpanc"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png"></a>
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">AI小屋</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Better me.</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-board">
+          <a href="/board" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            留言板
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://www.mrpanc.com/p/3203111967/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Mr Panc">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="AI小屋">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                探索神经网络学习率下降问题
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-30T19:56:50+08:00">
+                2018-01-30
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-01-30T19:57:03+08:00">
+                2018-01-30
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/machine-learning/" itemprop="url" rel="index">
+                    <span itemprop="name">machine learning</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/p/3203111967/" class="leancloud_visitors" data-flag-title="探索神经网络学习率下降问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计</span>
+                
+                <span title="字数统计">
+                  5,640
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长</span>
+                
+                <span title="阅读时长">
+                  25
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <link rel="canonical" href="http://www.mrpanc.com/p/3203111967">
+<script type="application/ld+json">
+    {
+        "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+        "@id": "http://www.mrpanc.com/p/3203111967/",
+        "appid": "1590300728750598",
+        "title": "探索神经网络学习率下降问题",
+        "pubDate": "2018-01-30T19:56:50"
+    }
+</script>
+<h2 id="摘要">摘要</h2>
+<p>在理想情况下，我们希望神经网络从错误中学习的速度越快越好。事实究竟是否如此？本文对其进行了研究和分析。文章主要分为四部分，第一部分引出问题并对产生问题的原因进行了分析；第二部分提出了交叉熵代价函数的概念，从理论和实验两方面对其有效性进行了分析，并将其应用于识别MNIST数据集；第三部分提出了Softmax的概念，从理论上对其有效性进行了分析，并将其应用于识别MNIST数据集，同时分析了在使用时可能出现的数值问题，并提出了解决方法；第四部分对交叉熵代价函数与Softmax的关系进行了分析。</p>
+<a id="more"></a>
+<blockquote>
+<p>本文所有代码均已上传到<a href="https://github.com/mrpanc/machine-learning-notes" target="_blank" rel="noopener">Github</a></p>
+</blockquote>
+<h2 id="公式及符号说明">公式及符号说明</h2>
+<ul>
+<li><span class="math inline">\(n\)</span>表示输入的训练样本总数</li>
+<li><span class="math inline">\(x\)</span>表示一个训练样本</li>
+<li><span class="math inline">\(w\)</span>表示权重</li>
+<li><span class="math inline">\(b\)</span>表示偏移量</li>
+<li><span class="math inline">\(z = w^Tx + b\)</span></li>
+<li><span class="math inline">\(a = \sigma(z) = \frac{1}{1+e^{-z}}\)</span></li>
+<li><span class="math inline">\(z^L_j = \sum_k w^L_{jk}a^{L-1}_k+b^L_j\)</span></li>
+</ul>
+<h2 id="问题引入"><span id="jump1">问题引入</span></h2>
+<p>在理想情况下，我们希望神经网络从错误中学习的速度越快越好。那么究竟事实是否是这样呢？我们接下来通过一个小实验进行验证。假设现在要通过神经网络实现这样一个目标：输入<span class="math inline">\(1\)</span>，输出<span class="math inline">\(0\)</span>。为了简化实验过程，我们只用一个神经元进行训练。具体实现可见<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/single_neural_network.py" target="_blank" rel="noopener">single_neural_network.py</a>训练的神经元结构如下图所示。</p>
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180122235411_OaRamK_single_neural_network.jpeg" width="60%">
+</div>
+<p>在训练时，我们使用二次代价函数以及Sigmoid激活函数。现在假设初始权值<span class="math inline">\(w=0.6\)</span>，初始偏差<span class="math inline">\(b=0.9\)</span>。代价函数值和输出值随<code>epoch</code>变化曲线如下图所示。观察曲线可知当权值和偏差初始化为较合适的值时，代价函数值的确下降的很快，学习的速度也很快。</p>
+<span id="fig1">
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180123105949_h1d1JL_slowdown1.jpeg" width="60%">
+</div>
+<p></p></span><p></p>
+<p>接下来我们设置初始值<span class="math inline">\(w=2\)</span>，初始偏差<span class="math inline">\(b=2\)</span>。相比于之前设置的参数，现在初始的误差更大。运行结果可见下图。观察曲线可知在大约前150个<code>epoches</code>，代价函数下降的十分缓慢，学习曲线也十分平缓。这个现象表明初始误差变大之后，学习的速度反而变慢了。这与我们期望的效果截然相反。</p>
+<span id="fig2">
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180123105949_0VT8W3_slowdown2.jpeg" width="60%">
+</div>
+<p></p></span><p></p>
+<p>那么如何解决这个问题呢？在后续章节，我们会分析问题产生的原因，并据此提出解决方案。</p>
+<h2 id="原因分析"><span id="jump2">原因分析</span></h2>
+<p>首先，我们回顾一下之前训练使用的二次代价函数，表达式如下：</p>
+<p><span class="math display">\[
+C(w, b) = \frac{1}{2n}\sum_x (a-y)^2
+\]</span></p>
+<p>在使用梯度下降的过程中，根据</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\frac{\partial C}{\partial w} &amp;=&amp; (a-y)\sigma&#39;(z)x, \label{1}\tag{1} \\
+\frac{\partial C}{\partial b} &amp;=&amp; (a-y)\sigma&#39;(z), \label{2}\tag{2}
+\end{eqnarray}
+\]</span></p>
+<p>可知，学习率与<span class="math inline">\(\sigma&#39;(z)\)</span>相关。观察<span class="math inline">\(\sigma(z)\)</span>和<span class="math inline">\(\sigma&#39;(z)\)</span>的图像（可见下图），可以看到当神经网络训练的结果趋于<span class="math inline">\(0\)</span>或是<span class="math inline">\(1\)</span>时，<span class="math inline">\(\sigma\)</span>函数曲线就会趋于平坦，<span class="math inline">\(\sigma&#39;(z)\)</span>变得很小，<span class="math inline">\(\frac{\partial C}{\partial w}, \frac{\partial C}{\partial b}\)</span>也就随之变小，从而导致学习速度变慢。这就是学习率下降的原因所在。</p>
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180123113035_oahPCq_sigmoid.jpeg" width="60%">
+</div>
+<h2 id="交叉熵代价函数">交叉熵代价函数</h2>
+<h3 id="介绍">介绍</h3>
+<p>为了解决学习速度变慢的问题，我们引入交叉熵代价函数，针对单个神经元，表达式如下：</p>
+<p><span class="math display">\[C(w, b) = -\frac{1}{n} \sum_x y\ln(a)+(1-y)\ln(1-a)\]</span></p>
+<p>交叉熵代价函数可以作为神经网络的代价函数的原因有两个：</p>
+<ol style="list-style-type: decimal">
+<li>非负，即<span class="math inline">\(C &gt; 0\)</span>。</li>
+<li>当实际输出接近预计输出时，代价函数<span class="math inline">\(C\)</span>趋于<span class="math inline">\(0\)</span>。</li>
+</ol>
+<p>那么为什么使用交叉熵代价函数可以解决学习速度降低的问题呢？首先，我们对代价函数关于<span class="math inline">\(w，b\)</span>求偏导，求导过程如下：</p>
+<p><span class="math display">\[
+\begin{split}
+\frac{\partial C}{\partial w_j} &amp;= \frac{\partial \left[-\frac{1}{n} \sum_x y\ln a+(1-y)\ln(1-a) \right]}{\partial w_j} \\
+&amp;= -\frac{1}{n}\sum_x \left[ y\frac{\partial \ln a}{\partial w_j} + (1-y)\frac{\partial \ln (1-a)}{\partial w_j} \right] \\
+&amp;= -\frac{1}{n}\sum_x \left[ \frac{y}{a} \frac{\partial a}{\partial w_j} - \frac{1-y}{1-a}\frac{\partial a}{\partial w_j} \right] \\
+&amp;= -\frac{1}{n}\sum_x \left[ y(1-a) \frac{\partial z}{\partial w_j} - a(1-y)\frac{\partial z}{\partial w_j} \right] \\
+&amp;= -\frac{1}{n}\sum_x \left[y(1-a)x_j - a(1-y)x_j \right] \\
+&amp;= \frac{1}{n}\sum_x (a-y)x_j.
+\end{split} \label{3}\tag{3}
+\]</span></p>
+<p>同理可推得</p>
+<p><span class="math display">\[\frac{\partial C}{\partial b_j} = \frac{1}{n}\sum_x(a-y). \label{4}\tag{4}\]</span></p>
+<p>根据公式<span class="math inline">\(\eqref{3}\)</span>,<span class="math inline">\(\eqref{4}\)</span>可以发现学习的速度与<span class="math inline">\(\sigma\)</span>函数无关，而是由<span class="math inline">\((a-y)\)</span>控制，即由输出的误差控制，这是一个非常好的特性。误差越大，学习的速度就越快，并且消除了<span class="math inline">\(\sigma&#39;(z)\)</span>的影响，解决了学习率降低的问题。</p>
+<h3 id="使用效果">使用效果</h3>
+<p>那么究竟交叉熵代价函数在实际应用中是否真的解决了学习率下降的问题呢？我们接下来通过<a href="#jump1">问题引入</a>中使用的单神经元网络来验证。除了使用交叉熵代价函数替代二次代价函数之外（<a href="#code1">查看代码</a>），其他参数保持不变，即输入<span class="math inline">\(x=1\)</span>，学习率<span class="math inline">\(\alpha=0.15\)</span>，初始权值<span class="math inline">\(w=0.6\)</span>，初始偏差<span class="math inline">\(b=0.9\)</span>，预计输出<span class="math inline">\(y=0\)</span>。 <span id="code1"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CrossEntropyCost</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fn</span><span class="params">(a, y)</span>:</span></span><br><span class="line">        <span class="string">"""返回损失"""</span></span><br><span class="line">        <span class="keyword">return</span> np.sum(np.nan_to_num(-y * np.log(a) - (<span class="number">1</span> - y) * np.log(<span class="number">1</span> - a)))</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">delta</span><span class="params">(z, a, y)</span>:</span></span><br><span class="line">        <span class="string">"""返回输出层的损失delta"""</span></span><br><span class="line">        <span class="keyword">return</span> a - y</span><br></pre></td></tr></table></figure>
+<p></p>
+观察<a href="#fig3">下图</a>可以发现与问题引入中的<a href="#fig1">第一个样例</a>结果一样，学习的效果很好。接下来设置初始权值为<span class="math inline">\(w=2\)</span>，初始偏差<span class="math inline">\(b=2\)</span>，重新进行实验。 <span id="fig3">
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180124102118_8lpW57_slowdown4.jpeg" width="60%" height="40%">
+</div>
+<p></p></span><p></p>
+<p>根据<a href="#fig4">下图</a>可以发现对比之前的<a href="#fig2">学习效果</a>，现在的学习速度和最终的学习效果都好了很多。这就是交叉熵代价函数给我们带来的惊喜。当初始的误差较大时，它可以防止学习速度被阻塞，让神经网络可以如我们期望的那样从误差中快速学习。</p>
+<span id="fig4">
+<div align="center">
+<img src="http://opqcor65w.bkt.clouddn.com/20180124102118_co9UYZ_slowdown3.jpeg" width="60%" height="40%">
+</div>
+<p></p></span><p></p>
+<h3 id="在多层多神经元网络的应用">在多层多神经元网络的应用</h3>
+<p>上一节中只针对单个神经元网络进行了分析，但是在现实生活中我们使用的往往是多层多神经元网络，接下来我们继续探讨交叉熵代价函数是否在多层多神经元网络上依然有效。假设<span class="math inline">\(y_1, y_2, \cdots\)</span>是神经元的预计输出，<span class="math inline">\(a_1^L,a_2^L, \cdots\)</span>是神经元的实际输出，那么二次代价函数与交叉熵代价函数的表达式可见公式<span class="math inline">\(\eqref{5}\)</span>、公式<span class="math inline">\(\eqref{6}\)</span>：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+C &amp;=&amp; \frac{1}{2n} \sum_x \sum_j (a^L_j-y_j)^2. \label{5}\tag{5} \\
+C &amp;=&amp; -\frac{1}{n} \sum_x \sum_j \left[y_j \ln a^L_j + (1-y_j) \ln (1-a^L_j) \right]. \label{6}\tag{6}
+\end{eqnarray}
+\]</span></p>
+<p>根据公式<span class="math inline">\(\eqref{5}\)</span>，计算二次代价函数对<span class="math inline">\(w^L_{jk}\)</span>的偏导，可得： <span class="math display">\[
+\begin{split}
+\frac{\partial C}{\partial w^L_{jk}} &amp;= \frac{\partial C}{\partial a^L_j} \frac{\partial a^L_j}{\partial z^L_j} \frac{\partial z^L_j}{\partial w^L_{jk}} \\
+&amp;= \frac{1}{2n} \sum_x 2(a^L_j-y_j)\cdot \sigma&#39;(z^L_j) \cdot a^{L-1}_k \\
+&amp;= \frac{1}{n} \sum_x a^{L-1}_k(a^L_j - y_j)\sigma&#39;(z^L_j)
+\end{split} \label{7}\tag{7}
+\]</span></p>
+<p>观察公式<span class="math inline">\(\eqref{7}\)</span>，可以发现与单个神经元的结果相似，学习速度与<span class="math inline">\(\sigma&#39;(z^L_j)\)</span>相关，导致学习速度下降。接下来我们求交叉熵代价函数关于<span class="math inline">\(w^L_{jk}\)</span>的偏导，求导过程如下：</p>
+<p><span class="math display">\[
+\begin{split}
+\frac{\partial C}{\partial w^L_{jk}} &amp;= \frac{\partial C}{\partial a^L_j} \frac{\partial a^L_j}{\partial z^L_j} \frac{\partial z^L_j}{\partial w^L_{jk}} \\
+&amp;= -\frac{1}{n} \sum_x \frac{y_j - a^L_j}{a^L_j(1-a^L_j)}\cdot a^L_j(1-a^L_j) \cdot a^{L-1}_k \\
+&amp;= \frac{1}{n} \sum_x a^{L-1}_k(a^L_j - y_j)
+\end{split} \label{8}\tag{8}
+\]</span></p>
+<p>观察公式<span class="math inline">\(\eqref{8}\)</span>，可以发现<span class="math inline">\(\sigma&#39;(z^L_j)\)</span>项消失了，表明交叉熵代价函数不仅对单个神经元网络有效，对于多层多神经元网络也有效。</p>
+<p>PS: 如果输出层使用<em>线性神经元</em>，即<span class="math inline">\(a^L_j = z^L_j\)</span>，那么二次代价函数关于<span class="math inline">\(w^L_{jk}\)</span>，<span class="math inline">\(b^L_j\)</span>的偏导为：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\frac{\partial C}{\partial w^L_{jk}} &amp;=&amp; \frac{1}{n} \sum_x a^{L-1}_k (a^L_j-y_j). \label{9}\tag{9} \\
+\frac{\partial C}{\partial b^L_{j}} &amp;=&amp; \frac{1}{n} \sum_x (a^L_j-y_j). \label{10}\tag{10}
+\end{eqnarray}
+\]</span></p>
+<p>观察公式<span class="math inline">\(\eqref{9}\)</span>, <span class="math inline">\(\eqref{10}\)</span>可以发现如果输出层使用线性神经，那么二次代价函数将不会带来学习率下降的问题。</p>
+<h3 id="mnist识别">MNIST识别</h3>
+<p>这一节我们将使用交叉熵代价函数来识别MNIST数据集。神经网络实现的细节以及实验代码的设计和运行结果可以查看<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/improved_network.py" target="_blank" rel="noopener">improved_network.py</a>和<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/learning_slowdown.ipynb" target="_blank" rel="noopener">learning_slowdown.ipynb</a>，这里就不再赘述。现在我们直接查看使用交叉熵代价函数的效果。参数设置参考前一篇文章<a href="http://mrpanc.com/p/3045050681/" target="_blank" rel="noopener">神经网络理论介绍及实现</a>，网络隐藏层包含30个神经元，mini-batch的大小设置为10，学习率<span class="math inline">\(\alpha\)</span>设置为0.5，并且训练30个epoches。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mnist_loader</span><br><span class="line">training_data, test_data = mnist_loader.load_data_wrapper(dirpath=<span class="string">"../data/"</span>)</span><br><span class="line"><span class="keyword">import</span> imporved_network <span class="keyword">as</span> network</span><br><span class="line">net = network.Network([<span class="number">784</span>, <span class="number">30</span>, <span class="number">10</span>], cost=network.CrossEntropyCost)</span><br><span class="line">net.large_weight_initializer()</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">0.5</span>, \</span><br><span class="line">        evaluation_data=test_data, \</span><br><span class="line">        monitor_evaluation_accuracy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<p>当使用交叉熵代价函数时，最终的准确率到达了<span class="math inline">\(95.55\%\)</span>（epoch 18），而使用二次代价函数时，最终的准确率为<span class="math inline">\(95.29\%\)</span>，提升了<span class="math inline">\(0.26\%\)</span>。将隐藏层神经元增加到50后，最终准确率到达了<span class="math inline">\(96.46\%\)</span>（epoch 28），与使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>相比，增加了<span class="math inline">\(0.44\%\)</span>。虽然这样看来提升的并不多，但是换个角度来看，错误率从<span class="math inline">\(3.98\%\)</span>降低到了<span class="math inline">\(3.54\%\)</span>，错误率较之前降低了约<span class="math inline">\(11\%\)</span>，还是十分可观的。当隐藏层神经元增加到100后，最终准确率到达了<span class="math inline">\(97.01\%\)</span>，而二次代价函数的准确率则降低到了<span class="math inline">\(87.84\%\)</span>。</p>
+<h3 id="来源">来源</h3>
+<p>前几节中，我们分析了交叉熵代价函数为何有效、观察了其应用到MNIST数据集的效果。那么我们不禁想问最初是如何想到这个代价函数的呢？这一章让我们来了解一下交叉熵代价函数的由来。</p>
+<p>根据<a href="#jump2">原因分析</a>，我们已经得知使得学习率降低的罪魁祸首是<span class="math inline">\(\sigma&#39;(z)\)</span>。那么现在的问题就转化为我们能否找到一个代价函数使得该项消失。若能，则对于训练样本<span class="math inline">\(x\)</span>，<span class="math inline">\(C=C_x\)</span>将满足</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\frac{\partial C}{\partial w} &amp;=&amp; x_j(a-y), \label{11}\tag{11} \\
+\frac{\partial C}{\partial b} &amp;=&amp; (a-y). \label{12}\tag{12}
+\end{eqnarray}
+\]</span></p>
+<p>如果能找到满足公式<span class="math inline">\(\eqref{11}\)</span>，<span class="math inline">\(\eqref{12}\)</span>的代价函数，那么初始代价越大，学习速度就越快，从而解决学习率下降的问题。已知<span class="math inline">\(\frac{\partial C}{\partial b}\)</span>，根据链式法则可以推导得： <span class="math display">\[
+\begin{split}
+&amp; \because{
+    \begin{split}
+    \frac{\partial C}{\partial b} &amp;= \frac{\partial C}{\partial a} \frac{\partial a}{\partial b}, \\
+    \frac{\partial a}{\partial b} &amp;= \sigma&#39;(z) = a(1-a),
+    \end{split}}  \\
+&amp; \therefore{\frac{\partial C}{\partial a} = \frac{a-y}{a(1-a)}}.
+\end{split} \label{13}\tag{13}
+\]</span></p>
+<p>想要得到<span class="math inline">\(C\)</span>的表达式，只需要对<span class="math inline">\(\frac{\partial C}{\partial a}\)</span>求积分。求解过程如下： <span class="math display">\[
+\begin{split}
+\int \frac{\partial C}{\partial a} = \frac{a-y}{a(1-a)}da
+&amp;= \int \frac{1}{1-a}da - \int \frac{y}{a(1-a)}da \\
+&amp;= -\ln (1-a) - \int y\left(\frac{1}{a} + \frac{1}{1-a}\right)da + \rm constant \\
+&amp;= - \ln (1-a) - y\ln a + y \ln (1-a) + \rm constant \\
+&amp;= -(y \ln a + (1-y)\ln(1-a)) + \rm constant
+\end{split} \label{14}\tag{14}
+\]</span></p>
+<p>公式<span class="math inline">\(\eqref{14}\)</span>表示单个训练样本<span class="math inline">\(x\)</span>的代价，要得到总的代价函数，只需要对所有的训练集求和后平均，这样我们就能得到 <span class="math display">\[
+\begin{eqnarray}
+  C = -\frac{1}{n} \sum_x [y \ln a +(1-y) \ln(1-a)] + {\rm constant}, \label{15}\tag{15}\end{eqnarray}
+\]</span></p>
+<p>交叉熵代价函数并不是凭空想象出来的，而是根据需要进行推导自然得出的。交叉熵的概念其实最开始是来自于信息论，这边不再展开讨论，如果感兴趣可以浏览<a href="https://en.wikipedia.org/wiki/Cross_entropy" target="_blank" rel="noopener">维基百科</a>。</p>
+<h2 id="softmax">Softmax</h2>
+<p>上一章介绍了交叉熵代价函数，这一章将介绍如何用Softmax解决学习率下降问题。</p>
+<h3 id="引入">引入</h3>
+<p>Softmax提出了一个新的类型的输出层。当我们得到<span class="math inline">\(z_j^L\)</span>之后，传统的思路是带入激活函数计算作为输出层的输出，而Softmax则是带入Softmax函数进行计算，函数定义如下：</p>
+<p><span class="math display">\[
+a^L_j = \frac{e^{z^L_j}}{\sum_k e^{z^L_k}} \label{16}\tag{16}
+\]</span></p>
+<p>观察上式，不难得出：</p>
+<p><span class="math display">\[
+\sum_j a^L_j = \frac{\sum_j e^{z^L_j}}{\sum_k e^{z^L_k}} = 1 \label{17}\tag{17}
+\]</span></p>
+<p>根据公式<span class="math inline">\(\eqref{16}\)</span>可知所有的输出均为正数，根据公式<span class="math inline">\(\eqref{17}\)</span>可知所有输出和为<span class="math inline">\(1\)</span>。结合以上两点，我们可以将Softmax层得到的输出视为一个概率分布。对于很多问题来说，将得到的激活值<span class="math inline">\(a^L_j\)</span>直接作为输出为<span class="math inline">\(j\)</span>的概率估计是非常方便的。例如在训练MNIST数据集时，我们可以将<span class="math inline">\(a^L_j\)</span>视为数字被识别为<span class="math inline">\(j\)</span>的概率估计。</p>
+<h3 id="有效性分析">有效性分析</h3>
+<p>那么Softmax是如何解决学习速度下降问题的呢？首先，我们先定义一个对数似然代价函数，假设<span class="math inline">\(x\)</span>表示输入的训练样本，<span class="math inline">\(y\in\{1,2,\cdots,k\}\)</span>表示预计的输出，那么代价函数可定义为以下形式：</p>
+<p><span class="math display">\[
+C = - \sum_k y_k\log a^L_k \label{18}\tag{18}
+\]</span></p>
+<p>接下来我们对代价函数的合理性进行分析。以训练MNIST为例，输入一张<span class="math inline">\(7\)</span>的图片，若网络学习的效果好，则<span class="math inline">\(a^L_7\)</span>接近<span class="math inline">\(1\)</span>，<span class="math inline">\(-\ln a^L_7\)</span>接近<span class="math inline">\(0\)</span>；反之，若网络学习的效果不好，则<span class="math inline">\(a^L_7\)</span>接近<span class="math inline">\(0\)</span>，<span class="math inline">\(-\ln a^L_7\)</span>接近无穷大。因此，该代价函数是合理的。接下来继续探讨Softmax解决学习率下降的问题。首先求对数似然代价函数关于<span class="math inline">\(w\)</span>的偏导，求导过程如下：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+\frac{\partial C}{\partial w^L_{jk}} = \frac{\partial C}{\partial z_j^L}\frac{\partial z_j^L}{\partial w^L_{jk}}&amp;=&amp; \frac{\partial C}{\partial z_j^L}\frac{\partial \left(\sum_k w^L_{jk}a^{L-1}_k + b_j\right)}{\partial w_{jk}^L} \\
+&amp;=&amp; a_k^{L-1} \frac{\partial C}{\partial z_j^L} \\
+&amp;=&amp; a_k^{L-1} \frac{\partial \left(- \sum_i y_i\ln a^L_i\right)}{\partial z_j^L} \\
+&amp;=&amp; - a_k^{L-1} \sum_i y_i \frac{1}{a^L_i} \frac{\partial a_i^L}{\partial z_j^L}
+\end{eqnarray}
+\]</span></p>
+<p>基于公式<span class="math inline">\(\eqref{16}\)</span>，设<span class="math inline">\(f_i = e^{z^L_i}, g_i = \sum_k e^{z^L_k}\)</span>,</p>
+<p><span class="math display">\[
+\begin{split}
+\because{\frac{dg_i}{dz^L_j} = e^{z_j^L}, \frac{df_i}{dz^L_j} = \begin{cases}
+                               e^{z^L_j}, &amp; \text{if $i=j$} \\
+                               0, &amp; \text{otherwise} \end{cases}}
+\end{split}
+\]</span> <span class="math display">\[
+\begin{split}
+\therefore{\frac{\partial a_i^L}{\partial z^L_j} = \frac{f_i&#39;g_i-g_i&#39;f_i}{(g_i)^2} = \begin{cases}
+           \frac{e^{z^L_j}\sum_k e^{z^L_k} - e^{z^L_j}e^{z^L_j}}{\left(\sum e^{z^L_k}\right)^2} = \frac{e^{z^L_j}\left(\left(\sum_k e^{z^L_k}\right) - e^{z^L_j}\right)}{\sum_k e^{z^L_k}} = a_j^L(1-a_j^L) &amp; \text{if $i=j$} \\
+           \frac{0\sum_k e^{z^L_k} - e^{z^L_i}e^{z^L_j}}{\left(\sum_k e^{z^L_k}\right)^2} = -a_i^La_j^L&amp; \text{if $i\neq j$}\end{cases}}
+\end{split} \label{19} \tag{19}
+\]</span></p>
+<p><span class="math display">\[
+\begin{eqnarray}
+&amp; \therefore{\begin{split}\frac{\partial C}{\partial w^L_{jk}} &amp;= - a_k^{L-1} \sum_i y_i \frac{1}{a^L_i} \frac{\partial a_i^L}{\partial z_j^L} \\
+        &amp;= - a_k^{L-1}\left( y_j \frac{1}{a^L_j} a^L_j(1-a^L_j) + \sum_{i\neq j} y_i\frac{1}{a^L_i}(-a^L_ia^L_j)\right) \\
+        &amp;= - a_k^{L-1} \left(y_j - y_ja_j^L - \sum_{i \neq j}y_ia^L_j\right) \\
+        &amp;= -a_k^{L-1}\left(y_j - a_j^L\sum_i y_i\right)\end{split}} \\
+&amp; \because{\sum_i y_i = 1} \\
+&amp; \therefore{\frac{\partial C}{\partial w^L_{jk}} = a_k^{L-1}(a_j^L - y_j)} \label{20} \tag{20}
+\end{eqnarray}
+\]</span></p>
+<p>同样的可以推出：</p>
+<p><span class="math display">\[
+\frac{\partial C}{\partial b^L_{j}} = a_j^L - y_j \label{21}\tag{21}
+\]</span></p>
+<p>根据公式<span class="math inline">\(\eqref{20}\)</span>，<span class="math inline">\(\eqref{21}\)</span>可知偏导中消除了<span class="math inline">\(\sigma&#39;(z)\)</span>项，从而保证了我们不会遇到学习率下降的问题。</p>
+<h3 id="应用">应用</h3>
+<p>这一节主要分为三部分，第一部分介绍Softmax具有冗余参数集的特点，第二部分介绍利用Softmax的特点避免在计算时出现数值错误，第三部分介绍如何将Softmax应用于识别MNIST数据集。</p>
+<h4 id="softmax的特点">Softmax的特点</h4>
+<p>Softmax有一个不寻常的特点：它有一个“冗余”的参数集。假设我们从<span class="math inline">\(z_j^L\)</span>中减去了向量<span class="math inline">\(c\)</span>，那么Softmax函数将变成以下式子：</p>
+<p><span class="math display">\[
+\begin{split}
+a^L_j = \frac{e^{z^L_j-c}}{\sum_k e^{z^L_k-c}} =\frac{e^{z^L_j}e^c}{\sum_k e^{z^L_k}e^c} =\frac{e^{z^L_j}e^c}{e^c\sum_k e^{z^L_k}} =\frac{e^{z^L_j}}{\sum_k e^{z^L_k}}
+\end{split}\]</span></p>
+<p>我们可以发现从<span class="math inline">\(z_j^L\)</span>中减去了向量<span class="math inline">\(c\)</span>完全不影响函数的预测结果。</p>
+<h4 id="softmax数值问题">Softmax数值问题</h4>
+<p><a href="#code2">以下代码</a>实现了Softmax的计算。当输入的<span class="math inline">\(|z|\)</span>较小时（如<a href="#emp1">例1</a>），计算并无异常。但是当输入的<span class="math inline">\(|z|\)</span>较大时（如<a href="#emp1">例2</a>），会出现数值错误。出现数值错误的原因是由于浮点数只有64位，若<span class="math inline">\(z\)</span>很大，计算<span class="math inline">\(e^z\)</span>时会得到<code>inf</code>导致上溢出；若<span class="math inline">\(z\)</span>很小，分母<span class="math inline">\(\sum_ke^{z_k}=0\)</span>，导致下溢出。</p>
+<p><span id="code2"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">softmax</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="string">"""传统的softmax"""</span></span><br><span class="line">    <span class="keyword">return</span> np.exp(z) / np.sum(np.exp(z))</span><br></pre></td></tr></table></figure>
+<p></p>
+<p><span id="emp1"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 例1</span></span><br><span class="line">z1 = [<span class="number">1</span>, <span class="number">1.2</span>, <span class="number">1.6</span>, <span class="number">1.9</span>]</span><br><span class="line">print(softmax(z1))</span><br></pre></td></tr></table></figure>
+<pre><code>Output: [ 0.15377223  0.18781783  0.28019128  0.37821866]</code></pre>
+<p></p>
+<p><span id="emp2"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 例2</span></span><br><span class="line">z2 = [<span class="number">1000</span>, <span class="number">1000</span>, <span class="number">1000</span>, <span class="number">10000</span>]</span><br><span class="line">z3 = [<span class="number">-1000</span>, <span class="number">-1000</span>, <span class="number">-1000</span>, <span class="number">-10000</span>]</span><br><span class="line">print(softmax(z2), softmax(z3))</span><br></pre></td></tr></table></figure>
+<pre><code>output: [ nan  nan  nan  nan] [ nan  nan  nan  nan]
+... RuntimeWarning: overflow encountered in exp ...
+... RuntimeWarning: invalid value encountered in true_divide ...</code></pre>
+<p></p>
+<p>那么应该如何解决呢？根据前一节中Softmax的特性，我们可以让<span class="math inline">\(z\)</span>减去一个<span class="math inline">\(c\)</span>（<span class="math inline">\(c=max(z)\)</span>）。经过处理之后，<span class="math inline">\(max(z-c)=0\)</span>，意味着<span class="math inline">\(e\)</span>的指数最大为0，解决了计算分子时出现的上溢出的问题；同时也保证了分母中必包含一项为<span class="math inline">\(1\)</span>，从而保证分母不为<span class="math inline">\(0\)</span>，解决了下溢出的问题。代码以及运行实例如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">shift_softmax</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="string">"""偏移c=max(z)，避免z过大或过小导致上溢出或下溢出"""</span></span><br><span class="line">    c = np.max(z)</span><br><span class="line">    exp_z = np.exp(z-c)</span><br><span class="line">    <span class="keyword">return</span> exp_z / np.sum(exp_z)</span><br><span class="line">print(shift_softmax(z2), shift_softmax(z3))</span><br></pre></td></tr></table></figure>
+<pre><code>output: [ 0.  0.  0.  1.] [ 0.33333333  0.33333333  0.33333333  0.        ]</code></pre>
+<p>观察上述代码得到的输出，我们可以发现经过Softmax函数计算后可能出现<span class="math inline">\(a=0\)</span>的情况。当我们根据公式<span class="math inline">\(\eqref{18}\)</span>计算代价函数<span class="math inline">\(C\)</span>时（<a href="#code3">代码</a>），需要计算<span class="math inline">\(\log a\)</span>，这时就会出现<span class="math inline">\(\log 0\)</span>的错误（<a href="#emp3">例3</a>）。 <span id="code3"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(a, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> np.dot(np.log(a), np.transpose(y))</span><br></pre></td></tr></table></figure>
+<p> <span id="emp3"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 例3</span></span><br><span class="line">y = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">z = [<span class="number">1000</span>, <span class="number">1000</span>, <span class="number">1000</span>, <span class="number">10000</span>]</span><br><span class="line">print(cost(shift_softmax(z), y))</span><br></pre></td></tr></table></figure>
+<pre><code>Output: nan
+RuntimeWarning: divide by zero encountered in log</code></pre>
+<p></p>
+<p>那么如何解决这个问题呢？我们不再计算偏移<span class="math inline">\(c\)</span>后的Softmax函数，而是直接计算偏移<span class="math inline">\(c\)</span>后Softmax函数的<span class="math inline">\(\log\)</span>值（<a href="#code4">代码及实例</a>）。根据公式<span class="math inline">\(\eqref{22}\)</span>，可以看到直接计算<span class="math inline">\(\log\)</span>值的好处在于消除了可能导致<span class="math inline">\(\log 0\)</span>的项——求和项<span class="math inline">\(\log \left(\sum_k e^{z^L_k-c}\right)\)</span>中至少有一项为<span class="math inline">\(1\)</span>，使得求<span class="math inline">\(\log\)</span>值时不会下溢出，避免了计算<span class="math inline">\(\log 0\)</span>的悲剧发生。</p>
+<p><span id="code4"></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_softmax</span><span class="params">(z)</span>:</span></span><br><span class="line">    <span class="string">"""根据公式直接求偏移c后softmax的log值，避免出现求log0的情况"""</span></span><br><span class="line">    c = np.max(z)</span><br><span class="line">    <span class="keyword">return</span> z - c - np.log(np.sum(np.exp(z-c)))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost2</span><span class="params">(log_a, y)</span>:</span></span><br><span class="line">    <span class="string">"""输入经过处理的log a"""</span></span><br><span class="line">    <span class="keyword">return</span> np.dot(log_a, np.transpose(y))</span><br><span class="line"></span><br><span class="line">z = [<span class="number">1000</span>, <span class="number">1000</span>, <span class="number">1000</span>, <span class="number">10000</span>]</span><br><span class="line">log_a = log_softmax(z)</span><br><span class="line">y = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">print(cost2(log_a, y))</span><br></pre></td></tr></table></figure>
+<pre><code>Output: 0.0</code></pre>
+<p> <span class="math display">\[
+\begin{eqnarray}
+\log a^L_j &amp;=&amp; \log \frac{e^{z^L_j-c}}{\sum_k e^{z^L_k-c}} \\
+&amp;=&amp; \log e^{z^L_j-c} - \log \left(\sum_k e^{z^L_k-c}\right) \\
+&amp;=&amp; \left(z^L_j-c\right)-\log \left(\sum_k e^{z^L_k-c}\right) \label{22} \tag{22}
+\end{eqnarray}
+\]</span></p>
+<h4 id="使用softmax识别mnist数据集">使用Softmax识别MNIST数据集</h4>
+<p>我们在分析Softmax有效性时，已经得到了在应用Softmax时需要用到的两个公式<span class="math inline">\(\eqref{20}\)</span>，<span class="math inline">\(\eqref{21}\)</span>，分别表示代价函数<span class="math inline">\(C\)</span>对<span class="math inline">\(w\)</span>和对<span class="math inline">\(b\)</span>的偏导。接下来我们来推导在反向传播时需要用到的输出层误差<span class="math inline">\(\delta^L_j\)</span>。推导过程如下：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+&amp;   \begin{split}
+    \delta^L_j = \frac{\partial C}{\partial z_j^L}
+    &amp;=&amp; \frac{\partial \left(- \sum_i y_i\ln a^L_i\right)}{\partial z_j^L} \\
+    &amp;=&amp; - \sum_i y_i \frac{1}{a^L_i} \frac{\partial a_i^L}{\partial z_j^L} \\
+    \end{split} \\
+&amp; \because \text{Equation } \ref{19} \\
+&amp; \therefore \begin{split}
+\delta^L_j
+&amp;=&amp;  \underbrace{- y_j \frac{1}{a^L_j} a^L_j(1-a^L_j)}_{\color{red}{\text{When } i=j}} - \underbrace{\sum_{i\neq j}y_i\frac{1}{a^L_i} (-a^L_ia^L_j)}_{\color{red}{\text{When } i \neq j}} \\
+&amp;=&amp; \underbrace{y_ja^L_j-y_j}_{\color{red}{\text{When } i=j}} + \underbrace{\sum_{i\neq j}y_ia^L_j}_{\color{red}{\text{When } i \neq j}} \\
+&amp;=&amp; a_j^L\sum_i y_i - y_j
+\end{split} \\
+&amp; \because \sum_i y_i = 1 \\
+&amp; \therefore \delta^L_j=a^L_j-y_j \label{23}\tag{23}
+\end{eqnarray}
+\]</span></p>
+<p>推导到这里就结束了。具体实现的代码可以查看<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/improved_network.py" target="_blank" rel="noopener">Github</a>。参数设置与前一章一致，我们来看看实现的效果如何。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mnist_loader</span><br><span class="line">training_data, test_data = mnist_loader.load_data_wrapper(dirpath=<span class="string">"../data/"</span>)</span><br><span class="line"><span class="keyword">import</span> improved_network <span class="keyword">as</span> network2</span><br><span class="line">net = network2.Network([<span class="number">784</span>, <span class="number">30</span>, <span class="number">10</span>], cost=network2.SoftmaxCost)</span><br><span class="line">net.large_weight_initializer()</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">0.5</span>, \</span><br><span class="line">        evaluation_data=test_data, \</span><br><span class="line">        monitor_evaluation_accuracy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<p>当隐藏层神经元为30时，准确率为<span class="math inline">\(95.27\%\)</span>，比使用二次代价函数时的准确率<span class="math inline">\(95.29\%\)</span>要低一些。当隐藏层神经元增加到50时，准确率为<span class="math inline">\(96\%\)</span>，依旧比使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>要低一些。当隐藏层神经元增加到100时，准确率上升到了<span class="math inline">\(96.59\%\)</span>，高于二次代价函数达到的<span class="math inline">\(87.84\%\)</span>准确率，但低于使用交叉熵代价函数达到的<span class="math inline">\(97.01\%\)</span>准确率。</p>
+<h2 id="交叉熵代价函数与softmax的关系">交叉熵代价函数与Softmax的关系</h2>
+<p>回顾Softmax的代价函数<span class="math inline">\(\eqref{18}\)</span>，当<span class="math inline">\(k=2\)</span>时，Softmax的代价函数与交叉熵代价函数形式是一致的。具体来说，当<span class="math inline">\(k=2\)</span>时，Softmax的代价函数为：</p>
+<p><span class="math display">\[
+C = -\sum_{k=1}^2y_k\log a_k = -y_1\log \frac{e^{z_1}}{e^{z_1}+e^{z_2}} - y_2 \log \frac{e^{z_2}}{e^{z_1}+e^{z_2}}
+\]</span></p>
+<p>根据Softmax函数参数冗余的特点，我们令<span class="math inline">\(c=z_1\)</span>，让参数<span class="math inline">\(z_1, z_2\)</span>都减去<span class="math inline">\(c\)</span>，可得：</p>
+<p><span class="math display">\[
+\begin{eqnarray}
+&amp; \begin{split} C &amp;=&amp; -y_1\log \frac{e^{z_1-z_1}}{e^{z_1-z_1}+e^{z_2-z_1}} - y_2 \log \frac{e^{z_2-z_1}}{e^{z_1-z_1}+e^{z_2-z_1}} \\
+&amp;=&amp; -y_1 \log \frac{1}{1+e^{z_2-z_1}} - y_2 \log \frac{e^{z_2-z_1}}{1+e^{z_2-z_1}} \\
+&amp;=&amp; -y_1 \log \frac{1}{1+e^{z_2-z_1}} - y_2 \log \left (1-\frac{1}{1+e^{z_2-z_1}}\right)
+\end{split} \\
+&amp; \because y_1+y_2 = 1 \\
+&amp; \therefore C = -y_1 \log \frac{1}{1+e^{z_2-z_1}} - (1-y_1) \log \left (1-\frac{1}{1+e^{z_2-z_1}}\right)
+\end{eqnarray}
+\]</span></p>
+<p>用<span class="math inline">\(z&#39;\)</span>代替<span class="math inline">\(z_1-z_2\)</span>，用<span class="math inline">\(y&#39;\)</span>代替<span class="math inline">\(y_1\)</span>，最终的形式为：</p>
+<p><span class="math display">\[
+C = -y’ \log \frac{1}{1+e^{-z&#39;}} - (1-y&#39;) \log \left (1-\frac{1}{1+e^{-z&#39;}}\right) \label{24}\tag{24}
+\]</span></p>
+<p>可以发现公式<span class="math inline">\(\eqref{24}\)</span>与交叉熵代价函数<span class="math inline">\(\eqref{6}\)</span>的定义是一致的。</p>
+<h2 id="参考文献">参考文献</h2>
+<ol style="list-style-type: decimal">
+<li><a href="http://neuralnetworksanddeeplearning.com/" target="_blank" rel="noopener">Michael A. Nielsen, &quot;Neural network and deep learning&quot;, Determination Press, 2015</a></li>
+<li><a href="http://deeplearning.stanford.edu/wiki/index.php/Softmax回归" target="_blank" rel="noopener">Andrew Ng, et al. Softmax Regression</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/uploads/wechatpay.png" alt="Mr Panc WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/uploads/alipay.png" alt="Mr Panc Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+  <ul class="post-copyright">
+    <li class="post-copyright-author">
+      <strong>本文作者：</strong>
+      Mr Panc
+    </li>
+    <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://www.mrpanc.com/p/3203111967/" title="探索神经网络学习率下降问题">http://www.mrpanc.com/p/3203111967/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong>
+      本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/neural-network/" rel="tag"># neural network</a>
+          
+            <a href="/tags/softmax/" rel="tag"># softmax</a>
+          
+            <a href="/tags/cross-entropy/" rel="tag"># cross entropy</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/p/3045050681/" rel="next" title="神经网络理论介绍及实现">
+                <i class="fa fa-chevron-left"></i> 神经网络理论介绍及实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comment" id="comment">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="Mr Panc" />
+          <p class="site-author-name" itemprop="name">Mr Panc</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/mrpanc" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:mrpanc520@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                  E-Mail
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/u/1014145760" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#公式及符号说明"><span class="nav-number">2.</span> <span class="nav-text">公式及符号说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题引入"><span class="nav-number">3.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原因分析"><span class="nav-number">4.</span> <span class="nav-text">原因分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉熵代价函数"><span class="nav-number">5.</span> <span class="nav-text">交叉熵代价函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">5.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用效果"><span class="nav-number">5.2.</span> <span class="nav-text">使用效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在多层多神经元网络的应用"><span class="nav-number">5.3.</span> <span class="nav-text">在多层多神经元网络的应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mnist识别"><span class="nav-number">5.4.</span> <span class="nav-text">MNIST识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#来源"><span class="nav-number">5.5.</span> <span class="nav-text">来源</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax"><span class="nav-number">6.</span> <span class="nav-text">Softmax</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#引入"><span class="nav-number">6.1.</span> <span class="nav-text">引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有效性分析"><span class="nav-number">6.2.</span> <span class="nav-text">有效性分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用"><span class="nav-number">6.3.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#softmax的特点"><span class="nav-number">6.3.1.</span> <span class="nav-text">Softmax的特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#softmax数值问题"><span class="nav-number">6.3.2.</span> <span class="nav-text">Softmax数值问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用softmax识别mnist数据集"><span class="nav-number">6.3.3.</span> <span class="nav-text">使用Softmax识别MNIST数据集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#交叉熵代价函数与softmax的关系"><span class="nav-number">7.</span> <span class="nav-text">交叉熵代价函数与Softmax的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">8.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mr Panc</span>
+  <div class="powered-by">  
+  </div>
+  <span>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></span>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+    <link rel="stylesheet" href="http://98.142.139.222/disqus/dist/iDisqus.min.css" />
+    <script src="http://98.142.139.222/disqus/dist/iDisqus.min.js"></script>
+    <script>
+        var emojiList = [{
+            code:'smile',
+            title:'笑脸',
+            unicode:'1f604'
+        },{
+            code:'mask',
+            title:'生病',
+            unicode:'1f637'
+        },{
+            code:'joy',
+            title:'破涕为笑',
+            unicode:'1f602'
+        },{
+            code:'stuck_out_tongue_closed_eyes',
+            title:'吐舌',
+            unicode:'1f61d'
+        },{
+            code:'flushed',
+            title:'脸红',
+            unicode:'1f633'
+        },{
+            code:'scream',
+            title:'恐惧',
+            unicode:'1f631'
+        },{
+            code:'pensive',
+            title:'失望',
+            unicode:'1f614'
+        },{
+            code:'unamused',
+            title:'无语',
+            unicode:'1f612'
+        },{
+            code:'grin',
+            title:'露齿笑',
+            unicode:'1f601'
+        },{
+            code:'heart_eyes',
+            title:'色',
+            unicode:'1f60d'
+        },{
+            code:'sweat',
+            title:'汗',
+            unicode:'1f613'
+        },{
+            code:'smirk',
+            title:'得意',
+            unicode:'1f60f'
+        }];
+
+        var disq = new iDisqus('comment', {
+            forum: 'mrpanc',
+            site: 'http://mrpanc.com',
+            api: 'http://98.142.139.222/disqus/api',
+            mode: 2,
+            badge: '博主',
+            timeout: 3000,
+            init: true,
+            emoji_list: emojiList
+        });
+        disq.count();
+    </script>
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("EnIWcmxAoAWKQKGm30FWAbx1-gzGzoHsz", "bSCT7Rz7X8XzTMGkMtcmNqCF");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+  
+
+</body>
+</html>
