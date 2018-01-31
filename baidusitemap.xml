@@ -4,16 +4,18 @@
 
     
   <url>
-    <loc>http://mrpanc.com/p/3045050681/</loc>
-    <lastmod>2018-01-31T02:36:00.000Z</lastmod>
+    <loc>http://mrpanc.com/p/3203111967/</loc>
+    <lastmod>2018-01-31T15:50:09.085Z</lastmod>
     <data>
         <display>
-        <title>神经网络理论介绍及实现</title>
-        <pubTime>2018-01-19T10:35:37.000Z</pubTime>
+        <title>探索神经网络学习率下降问题</title>
+        <pubTime>2018-01-30T11:56:50.000Z</pubTime>
         
         <tag>neural network</tag>
          
-        <tag>backward propagation</tag>
+        <tag>softmax</tag>
+         
+        <tag>cross entropy</tag>
          
          
            
@@ -26,18 +28,16 @@
 
     
   <url>
-    <loc>http://mrpanc.com/p/3203111967/</loc>
-    <lastmod>2018-01-30T12:47:07.984Z</lastmod>
+    <loc>http://mrpanc.com/p/3045050681/</loc>
+    <lastmod>2018-01-31T02:36:00.000Z</lastmod>
     <data>
         <display>
-        <title>探索神经网络学习率下降问题</title>
-        <pubTime>2018-01-30T11:56:50.000Z</pubTime>
+        <title>神经网络理论介绍及实现</title>
+        <pubTime>2018-01-19T10:35:37.000Z</pubTime>
         
         <tag>neural network</tag>
          
-        <tag>softmax</tag>
-         
-        <tag>cross entropy</tag>
+        <tag>backward propagation</tag>
          
          
            

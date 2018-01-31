@@ -106,7 +106,7 @@
 <meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180123113035_oahPCq_sigmoid.jpeg">
 <meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180124102118_8lpW57_slowdown4.jpeg">
 <meta property="og:image" content="http://opqcor65w.bkt.clouddn.com/20180124102118_co9UYZ_slowdown3.jpeg">
-<meta property="og:updated_time" content="2018-01-30T12:47:07.984Z">
+<meta property="og:updated_time" content="2018-01-31T15:50:09.085Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="探索神经网络学习率下降问题">
 <meta name="twitter:description" content="{         &quot;@context&quot;: &quot;https://ziyuan.baidu.com/contexts/cambrian.jsonld&quot;,         &quot;@id&quot;: &quot;http://mrpanc.com/p/3203111967/&quot;,         &quot;appid&quot;: &quot;1590300728750598&quot;,         &quot;title&quot;: &quot;探索神经网络学习率下降问题&quot;">
@@ -379,8 +379,8 @@
               
                 <span class="post-meta-item-text">更新于</span>
               
-              <time title="更新于" itemprop="dateModified" datetime="2018-01-30T20:47:07+08:00">
-                2018-01-30
+              <time title="更新于" itemprop="dateModified" datetime="2018-01-31T23:50:09+08:00">
+                2018-01-31
               </time>
             
           </span>
@@ -439,7 +439,7 @@
                   <span class="post-meta-item-text">字数统计</span>
                 
                 <span title="字数统计">
-                  5,640
+                  5,610
                 </span>
               
 
@@ -488,7 +488,7 @@
 <p>在理想情况下，我们希望神经网络从错误中学习的速度越快越好。事实究竟是否如此？本文对其进行了研究和分析。文章主要分为四部分，第一部分引出问题并对产生问题的原因进行了分析；第二部分提出了交叉熵代价函数的概念，从理论和实验两方面对其有效性进行了分析，并将其应用于识别MNIST数据集；第三部分提出了Softmax的概念，从理论上对其有效性进行了分析，并将其应用于识别MNIST数据集，同时分析了在使用时可能出现的数值问题，并提出了解决方法；第四部分对交叉熵代价函数与Softmax的关系进行了分析。</p>
 <a id="more"></a>
 <blockquote>
-<p>本文所有代码均已上传到<a href="https://github.com/mrpanc/machine-learning-notes" target="_blank" rel="noopener">Github</a></p>
+<p><span id="github">本文所有代码均已上传到<a href="https://github.com/mrpanc/machine-learning-notes/tree/master/learning_slowdown" target="_blank" rel="noopener">Github: learning_slowdown</a> </span></p>
 </blockquote>
 <h2 id="公式及符号说明">公式及符号说明</h2>
 <ul>
@@ -501,7 +501,7 @@
 <li><span class="math inline">\(z^L_j = \sum_k w^L_{jk}a^{L-1}_k+b^L_j\)</span></li>
 </ul>
 <h2 id="问题引入"><span id="jump1">问题引入</span></h2>
-<p>在理想情况下，我们希望神经网络从错误中学习的速度越快越好。那么究竟事实是否是这样呢？我们接下来通过一个小实验进行验证。假设现在要通过神经网络实现这样一个目标：输入<span class="math inline">\(1\)</span>，输出<span class="math inline">\(0\)</span>。为了简化实验过程，我们只用一个神经元进行训练。具体实现可见<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/single_neural_network.py" target="_blank" rel="noopener">single_neural_network.py</a>训练的神经元结构如下图所示。</p>
+<p>在理想情况下，我们希望神经网络从错误中学习的速度越快越好。那么究竟事实是否是这样呢？我们接下来通过一个小实验进行验证。假设现在要通过神经网络实现这样一个目标：输入<span class="math inline">\(1\)</span>，输出<span class="math inline">\(0\)</span>。为了简化实验过程，我们只用一个神经元进行训练。训练的神经元结构如下图所示。</p>
 <div align="center">
 <img src="http://opqcor65w.bkt.clouddn.com/20180122235411_OaRamK_single_neural_network.jpeg" width="60%">
 </div>
@@ -605,9 +605,9 @@ C &amp;=&amp; -\frac{1}{n} \sum_x \sum_j \left[y_j \ln a^L_j + (1-y_j) \ln (1-a^
 \]</span></p>
 <p>观察公式<span class="math inline">\(\eqref{9}\)</span>, <span class="math inline">\(\eqref{10}\)</span>可以发现如果输出层使用线性神经，那么二次代价函数将不会带来学习率下降的问题。</p>
 <h3 id="mnist识别">MNIST识别</h3>
-<p>这一节我们将使用交叉熵代价函数来识别MNIST数据集。神经网络实现的细节以及实验代码的设计和运行结果可以查看<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/improved_network.py" target="_blank" rel="noopener">improved_network.py</a>和<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/learning_slowdown.ipynb" target="_blank" rel="noopener">learning_slowdown.ipynb</a>，这里就不再赘述。现在我们直接查看使用交叉熵代价函数的效果。参数设置参考前一篇文章<a href="http://mrpanc.com/p/3045050681/" target="_blank" rel="noopener">神经网络理论介绍及实现</a>，网络隐藏层包含30个神经元，mini-batch的大小设置为10，学习率<span class="math inline">\(\alpha\)</span>设置为0.5，并且训练30个epoches。</p>
+<p>这一节我们将使用交叉熵代价函数来识别MNIST数据集。神经网络实现的细节以及实验代码的设计和运行结果已上传到<a href="#github">Github</a>，这里就不再赘述。现在我们直接查看使用交叉熵代价函数的效果。训练的网络隐藏层包含30个神经元，mini-batch的大小设置为10，学习率<span class="math inline">\(\alpha\)</span>设置为0.5，并且训练30个epoches。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mnist_loader</span><br><span class="line">training_data, test_data = mnist_loader.load_data_wrapper(dirpath=<span class="string">"../data/"</span>)</span><br><span class="line"><span class="keyword">import</span> imporved_network <span class="keyword">as</span> network</span><br><span class="line">net = network.Network([<span class="number">784</span>, <span class="number">30</span>, <span class="number">10</span>], cost=network.CrossEntropyCost)</span><br><span class="line">net.large_weight_initializer()</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">0.5</span>, \</span><br><span class="line">        evaluation_data=test_data, \</span><br><span class="line">        monitor_evaluation_accuracy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
-<p>当使用交叉熵代价函数时，最终的准确率到达了<span class="math inline">\(95.55\%\)</span>（epoch 18），而使用二次代价函数时，最终的准确率为<span class="math inline">\(95.29\%\)</span>，提升了<span class="math inline">\(0.26\%\)</span>。将隐藏层神经元增加到50后，最终准确率到达了<span class="math inline">\(96.46\%\)</span>（epoch 28），与使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>相比，增加了<span class="math inline">\(0.44\%\)</span>。虽然这样看来提升的并不多，但是换个角度来看，错误率从<span class="math inline">\(3.98\%\)</span>降低到了<span class="math inline">\(3.54\%\)</span>，错误率较之前降低了约<span class="math inline">\(11\%\)</span>，还是十分可观的。当隐藏层神经元增加到100后，最终准确率到达了<span class="math inline">\(97.01\%\)</span>，而二次代价函数的准确率则降低到了<span class="math inline">\(87.84\%\)</span>。</p>
+<p>当使用交叉熵代价函数时，最终的准确率到达了<span class="math inline">\(95.54\%\)</span>（epoch 18），而使用二次代价函数时，最终的准确率为<span class="math inline">\(95.29\%\)</span>，提升了<span class="math inline">\(0.25\%\)</span>。。将隐藏层神经元增加到50后，最终准确率到达了<span class="math inline">\(96.55\%\)</span>（epoch 26），与使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>相比，增加了<span class="math inline">\(0.53\%\)</span>。虽然这样看来提升的并不多，但是换个角度来看，错误率从<span class="math inline">\(3.98\%\)</span>降低到了<span class="math inline">\(3.45\%\)</span>，错误率较之前降低了约<span class="math inline">\(13\%\)</span>，还是十分可观的。当隐藏层神经元增加到100后，最终准确率到达了<span class="math inline">\(97.14\%\)</span>，而使用二次代价函数的准确率只有<span class="math inline">\(87.55\%\)</span>。</p>
 <h3 id="来源">来源</h3>
 <p>前几节中，我们分析了交叉熵代价函数为何有效、观察了其应用到MNIST数据集的效果。那么我们不禁想问最初是如何想到这个代价函数的呢？这一章让我们来了解一下交叉熵代价函数的由来。</p>
 <p>根据<a href="#jump2">原因分析</a>，我们已经得知使得学习率降低的罪魁祸首是<span class="math inline">\(\sigma&#39;(z)\)</span>。那么现在的问题就转化为我们能否找到一个代价函数使得该项消失。若能，则对于训练样本<span class="math inline">\(x\)</span>，<span class="math inline">\(C=C_x\)</span>将满足</p>
@@ -761,9 +761,9 @@ RuntimeWarning: divide by zero encountered in log</code></pre>
 &amp; \therefore \delta^L_j=a^L_j-y_j \label{23}\tag{23}
 \end{eqnarray}
 \]</span></p>
-<p>推导到这里就结束了。具体实现的代码可以查看<a href="https://github.com/mrpanc/machine-learning-notes/blob/master/notebook/improved_network.py" target="_blank" rel="noopener">Github</a>。参数设置与前一章一致，我们来看看实现的效果如何。</p>
+<p>推导到这里就结束了。具体实现的代码可以查看<a href="#github">Github</a>。参数设置与前一章一致，我们来看看实现的效果如何。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> mnist_loader</span><br><span class="line">training_data, test_data = mnist_loader.load_data_wrapper(dirpath=<span class="string">"../data/"</span>)</span><br><span class="line"><span class="keyword">import</span> improved_network <span class="keyword">as</span> network2</span><br><span class="line">net = network2.Network([<span class="number">784</span>, <span class="number">30</span>, <span class="number">10</span>], cost=network2.SoftmaxCost)</span><br><span class="line">net.large_weight_initializer()</span><br><span class="line">net.SGD(training_data, <span class="number">30</span>, <span class="number">10</span>, <span class="number">0.5</span>, \</span><br><span class="line">        evaluation_data=test_data, \</span><br><span class="line">        monitor_evaluation_accuracy=<span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
-<p>当隐藏层神经元为30时，准确率为<span class="math inline">\(95.27\%\)</span>，比使用二次代价函数时的准确率<span class="math inline">\(95.29\%\)</span>要低一些。当隐藏层神经元增加到50时，准确率为<span class="math inline">\(96\%\)</span>，依旧比使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>要低一些。当隐藏层神经元增加到100时，准确率上升到了<span class="math inline">\(96.59\%\)</span>，高于二次代价函数达到的<span class="math inline">\(87.84\%\)</span>准确率，但低于使用交叉熵代价函数达到的<span class="math inline">\(97.01\%\)</span>准确率。</p>
+<p>当隐藏层神经元为30时，准确率为<span class="math inline">\(95.11\%\)</span>，比使用二次代价函数时的准确率<span class="math inline">\(95.29\%\)</span>要低一些。当隐藏层神经元增加到50时，准确率上升到<span class="math inline">\(96.07\%\)</span>，比使用二次代价函数时的准确率<span class="math inline">\(96.02\%\)</span>要高一些。当隐藏层神经元增加到100时，准确率上升到了<span class="math inline">\(96.55\%\)</span>，高于二次代价函数达到的<span class="math inline">\(87.55\%\)</span>准确率，但低于使用交叉熵代价函数达到的<span class="math inline">\(97.14\%\)</span>准确率。</p>
 <h2 id="交叉熵代价函数与softmax的关系">交叉熵代价函数与Softmax的关系</h2>
 <p>回顾Softmax的代价函数<span class="math inline">\(\eqref{18}\)</span>，当<span class="math inline">\(k=2\)</span>时，Softmax的代价函数与交叉熵代价函数形式是一致的。具体来说，当<span class="math inline">\(k=2\)</span>时，Softmax的代价函数为：</p>
 <p><span class="math display">\[
@@ -788,7 +788,7 @@ C = -y’ \log \frac{1}{1+e^{-z&#39;}} - (1-y&#39;) \log \left (1-\frac{1}{1+e^{
 <h2 id="参考文献">参考文献</h2>
 <ol style="list-style-type: decimal">
 <li><a href="http://neuralnetworksanddeeplearning.com/" target="_blank" rel="noopener">Michael A. Nielsen, &quot;Neural network and deep learning&quot;, Determination Press, 2015</a></li>
-<li><a href="http://deeplearning.stanford.edu/wiki/index.php/Softmax回归" target="_blank" rel="noopener">Andrew Ng, et al. Softmax Regression</a></li>
+<li><a href="http://deeplearning.stanford.edu/wiki/index.php/Softmax_Regression" target="_blank" rel="noopener">Andrew Ng, et al. Softmax Regression</a></li>
 </ol>
 
       
